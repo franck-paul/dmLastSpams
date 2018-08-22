@@ -5,9 +5,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Dotclear 2 dmLastComments module\n"
+"Project-Id-Version: Dotclear 2 dmLastSpams module\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-06 10:54+0100\n"
+"POT-Creation-Date: 2018-08-22 14:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,81 +17,85 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: ../hg-plugins/dmLastComments/_admin.php:16
-msgid "Display last comments on dashboard"
+#: ../hg-plugins/dmLastSpams/_admin.php:17
+msgid "Display last spams on dashboard"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:16
-msgid "Last Comments Dashboard Module"
+#: ../hg-plugins/dmLastSpams/_admin.php:17
+msgid "Last Spams Dashboard Module"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:109
+#: ../hg-plugins/dmLastSpams/_admin.php:98
 msgid "at"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:116
+#: ../hg-plugins/dmLastSpams/_admin.php:105
 msgid "%Y-%m-%d"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:119
+#: ../hg-plugins/dmLastSpams/_admin.php:108
 msgid "%H:%M"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:128
-msgid "See all comments"
+#: ../hg-plugins/dmLastSpams/_admin.php:117
+msgid "See all spams"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:133
+#: ../hg-plugins/dmLastSpams/_admin.php:121
+msgid "No spams"
+msgstr ""
+
+#: ../hg-plugins/dmLastSpams/_admin.php:122
 #, php-format
 msgid "since %d hour"
 msgid_plural "since %d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:187
-msgid "Last comments on dashboard"
+#: ../hg-plugins/dmLastSpams/_admin.php:133
+msgid "Last spams"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:191
-msgid "Display last comments"
+#: ../hg-plugins/dmLastSpams/_admin.php:172
+msgid "Last spams on dashboard"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:193
-msgid "Number of last comments to display:"
+#: ../hg-plugins/dmLastSpams/_admin.php:176
+msgid "Display last spams"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:199
+#: ../hg-plugins/dmLastSpams/_admin.php:178
+msgid "Number of last spams to display:"
+msgstr ""
+
+#: ../hg-plugins/dmLastSpams/_admin.php:184
 msgid "Show authors"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:203
+#: ../hg-plugins/dmLastSpams/_admin.php:188
 msgid "Show dates"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:207
+#: ../hg-plugins/dmLastSpams/_admin.php:192
 msgid "Show times"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:211
-msgid "Exclude junk comments"
+#: ../hg-plugins/dmLastSpams/_admin.php:194
+msgid "Max age of spams to display (in hours):"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:213
-msgid "Max age of comments to display (in hours):"
+#: ../hg-plugins/dmLastSpams/_admin.php:197
+msgid "Leave empty to ignore age of spams"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:216
-msgid "Leave empty to ignore age of comments"
-msgstr ""
-
-#: ../hg-plugins/dmLastComments/_admin.php:220
+#: ../hg-plugins/dmLastSpams/_admin.php:201
 msgid "Small screen"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:224
+#: ../hg-plugins/dmLastSpams/_admin.php:205
 msgid "Auto refresh"
 msgstr ""
 
-#: ../hg-plugins/dmLastComments/_admin.php:228
+#: ../hg-plugins/dmLastSpams/_admin.php:209
 msgid "Display badges (only if Auto refresh is enabled)"
 msgstr ""

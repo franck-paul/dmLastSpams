@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dotclear 2 dmLastSpams module\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-06 10:54+0100\n"
+"POT-Creation-Date: 2018-08-22 14:12+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Franck Paul <carnet.franck.paul@gmail.com>\n"
 "Language-Team: \n"
@@ -30,11 +30,17 @@ msgstr "%H:%M"
 msgid "See all spams"
 msgstr "Voir tous les indésirables"
 
+msgid "No spams"
+msgstr "Pas d'indésirables"
+
 #, php-format
 msgid "since %d hour"
 msgid_plural "since %d hours"
 msgstr[0] "depuis %d heure"
 msgstr[1] "depuis %d heures"
+
+msgid "Last spams"
+msgstr "Derniers indésirables"
 
 msgid "Last spams on dashboard"
 msgstr "Derniers indésirables sur le tableau de bord"
