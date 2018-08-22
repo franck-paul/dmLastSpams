@@ -1,0 +1,60 @@
+ul.expandable {
+  list-style-type: none;
+  padding-left: 0.5em;
+}
+.badgeable {
+  position: relative;
+}
+.badge {
+  background-color: #d54e21;
+  /* bright red */
+  color: #fff;
+  vertical-align: top;
+  border-radius: 10px;
+  padding: 0 .6em;
+}
+.badge-block {
+  /* Dashboard module */
+  position: absolute;
+  top: -10px;
+  right: -10px;
+}
+.badge-block-icon {
+  /* Dashboard icon */
+  right: 20px;
+  background-color: slategray;
+}
+.badge-inline {
+  /* Menu item */
+  margin-left: .5em;
+}
+.badge-icon {
+  /* Dashboard icon */
+  position: absolute;
+  top: 0;
+  right: 20px;
+  border-radius: 5px;
+}
+.badge-info {
+  background-color: #3f51b5;
+  /* soft dark blue */
+}
+#last-spams li.dmls-new {
+  animation-name: dmls-new;
+  animation-duration: 2s;
+}
+#last-spams li.dmls-new::after {
+  content: " \02605";
+  /* ★ */
+}
+@keyframes dmls-new {
+  from {
+    background-color: #fff;
+  }
+  50% {
+    background-color: #ccff00;
+  }
+  to {
+    background-color: #fff;
+  }
+}
