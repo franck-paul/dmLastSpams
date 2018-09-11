@@ -25,23 +25,15 @@ dotclear.dmLastSpamsCount = function() {
     } else {
       var nb_spams = Number($('rsp>check', data).attr('ret'));
       if (nb_spams != dotclear.dmLastSpams_SpamCount) {
-        // First pass or spam counter changed
-        var icon_com = $('#dashboard-main #icons p a[href="comments.php"]');
-        if (icon_com.length) {
-          // Icon exists on dashboard
-          icon_com = icon_com.parent();
-          // Remove badge if exists
-          var spam_badge = icon_com.children('span.badge');
-          if (spam_badge.length) {
-            spam_badge.remove();
+        dotclear.badge(
+          $('#dashboard-main #icons p a[href="comments.php"]'), {
+            id: 'dmls',
+            remove: (nb_spams == 0),
+            value: nb_spams,
+            sibling: true,
+            icon: true
           }
-          // Add new badge if some spams exist
-          if (nb_spams > 0) {
-            // Badge on icon
-            var xml = '<span class="badge badge-block badge-block-icon">' + nb_spams + '</span>';
-            icon_com.append(xml);
-          }
-        }
+        );
         dotclear.dmLastSpams_SpamCount = nb_spams;
       }
     }
@@ -81,9 +73,6 @@ dotclear.dmLastSpamsCheck = function() {
               // Display new comments
               var xml = $('rsp>rows', data).attr('list');
               // Replace current list with the new one
-              if ($('#last-spams span.badge').length) {
-                $('#last-spams span.badge').remove();
-              }
               if ($('#last-spams ul').length) {
                 $('#last-spams ul').remove();
               }
@@ -93,18 +82,18 @@ dotclear.dmLastSpamsCheck = function() {
               var counter = Number($('rsp>rows', data).attr('counter'));
               if (counter > 0) {
                 dotclear.dmLastSpams_LastCounter = Number(dotclear.dmLastSpams_LastCounter) + counter;
-                if (dotclear.dmLastSpams_Badge) {
-                  // Badge on module
-                  xml = '<span class="badge badge-block">' + dotclear.dmLastSpams_LastCounter + '</span>' + xml;
-                  // Badge on menu item
-                  if ($('#main-menu li span.badge').length) {
-                    $('#main-menu li span.badge').remove();
-                  }
-                  var badge = '<span class="badge badge-inline">' + dotclear.dmLastSpams_LastCounter + '</span>';
-                  $('#main-menu li a[href="comments.php"]').after(badge);
-                }
               }
               $('#last-spams h3').after(xml);
+              if (dotclear.dmLastSpams_Badge) {
+                // Badge on module
+                dotclear.badge(
+                  $('#last-spams'), {
+                    id: 'dmls',
+                    value: dotclear.dmLastSpams_LastCounter,
+                    remove: (dotclear.dmLastSpams_LastCounter == 0),
+                  }
+                );
+              }
               // Bind every new lines for viewing comment content
               $.expandContent({
                 lines: $('#last-spams li.line'),
@@ -165,8 +154,6 @@ $(function() {
       $('#last-spams').addClass('badgeable');
       var icon_com = $('#dashboard-main #icons p a[href="comments.php"]');
       if (icon_com.length) {
-        // Icon exists on dashboard
-        icon_com.parent().addClass('badgeable');
         // First pass
         dotclear.dmLastSpamsCount();
         // Then fired every 30 seconds
