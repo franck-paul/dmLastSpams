@@ -30,11 +30,11 @@ class dmLastSpamsBehaviors
     {
         global $core;
 
-        $sqlp = array(
+        $sqlp = [
             'limit'      => 1,                 // only the last one
             'no_content' => true,              // content is not required
             'order'      => 'comment_id DESC' // get last first
-        );
+        ];
 
         $rs = $core->blog->getComments($sqlp);
 
@@ -169,7 +169,7 @@ class dmLastSpamsBehaviors
         // Add fieldset for plugin options
         $core->auth->user_prefs->addWorkspace('dmlastspams');
 
-        echo '<div class="fieldset"><h4>' . __('Last spams on dashboard') . '</h4>' .
+        echo '<div class="fieldset" id="dmlastspams"><h4>' . __('Last spams on dashboard') . '</h4>' .
 
         '<p>' .
         form::checkbox('dmlast_spams', 1, $core->auth->user_prefs->dmlastspams->last_spams) . ' ' .

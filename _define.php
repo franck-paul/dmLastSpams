@@ -22,6 +22,7 @@ $this->registerModule(
         'requires'    => [['core', '2.15']],
         'permissions' => 'admin',
         'support'     => 'https://open-time.net/?q=dmlastspams', // Support URL
-        'type'        => 'plugin'
+        'type'        => 'plugin',
+        'settings'    => ['pref' => '#user-favorites.dmlastspams'] // Settings
     ]
 );
