@@ -179,7 +179,7 @@ class dmLastSpamsBehaviors
         '<label for="dmlast_spams" class="classic">' . __('Display last spams') . '</label></p>' .
 
         '<p><label for="dmlast_spams_nb" class="classic">' . __('Number of last spams to display:') . '</label> ' .
-        form::field('dmlast_spams_nb', 2, 3, (integer) $core->auth->user_prefs->dmlastspams->last_spams_nb) .
+        form::number('dmlast_spams_nb', 1, 999, (integer) $core->auth->user_prefs->dmlastspams->last_spams_nb) .
         '</p>' .
 
         '<p>' .
@@ -195,7 +195,7 @@ class dmLastSpamsBehaviors
         '<label for="dmlast_spams_time" class="classic">' . __('Show times') . '</label></p>' .
 
         '<p><label for="dmlast_spams_recents" class="classic">' . __('Max age of spams to display (in hours):') . '</label> ' .
-        form::field('dmlast_spams_recents', 2, 3, (integer) $core->auth->user_prefs->dmlastspams->last_spams_recents) .
+        form::number('dmlast_spams_recents', 1, 96, (integer) $core->auth->user_prefs->dmlastspams->last_spams_recents) .
         '</p>' .
         '<p class="form-note">' . __('Leave empty to ignore age of spams') . '</p>' .
 
