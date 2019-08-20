@@ -17,11 +17,11 @@ if (!defined('DC_CONTEXT_ADMIN')) {return;}
 __('Last Spams Dashboard Module') . __('Display last spams on dashboard');
 
 // Dashboard behaviours
-$core->addBehavior('adminDashboardHeaders', array('dmLastSpamsBehaviors', 'adminDashboardHeaders'));
-$core->addBehavior('adminDashboardContents', array('dmLastSpamsBehaviors', 'adminDashboardContents'));
+$core->addBehavior('adminDashboardHeaders', ['dmLastSpamsBehaviors', 'adminDashboardHeaders']);
+$core->addBehavior('adminDashboardContents', ['dmLastSpamsBehaviors', 'adminDashboardContents']);
 
-$core->addBehavior('adminAfterDashboardOptionsUpdate', array('dmLastSpamsBehaviors', 'adminAfterDashboardOptionsUpdate'));
-$core->addBehavior('adminDashboardOptionsForm', array('dmLastSpamsBehaviors', 'adminDashboardOptionsForm'));
+$core->addBehavior('adminAfterDashboardOptionsUpdate', ['dmLastSpamsBehaviors', 'adminAfterDashboardOptionsUpdate']);
+$core->addBehavior('adminDashboardOptionsForm', ['dmLastSpamsBehaviors', 'adminDashboardOptionsForm']);
 
 # BEHAVIORS
 class dmLastSpamsBehaviors
@@ -30,11 +30,11 @@ class dmLastSpamsBehaviors
     {
         global $core;
 
-        $sqlp = array(
+        $sqlp = [
             'limit'      => 1,                 // only the last one
             'no_content' => true,              // content is not required
             'order'      => 'comment_id DESC' // get last first
-        );
+        ];
 
         $rs = $core->blog->getComments($sqlp);
 
@@ -65,7 +65,7 @@ class dmLastSpamsBehaviors
         $nb      = (integer) $nb;
 
         // Get last $nb comments
-        $params = array();
+        $params = [];
         if ($nb > 0) {
             $params['limit'] = $nb;
         } else {
@@ -84,9 +84,12 @@ class dmLastSpamsBehaviors
                     $ret .= ($last_id != -1 && $rs->comment_id > $last_id ? ' dmls-new' : '');
                     $last_counter++;
                 }
+                if ($rs->comment_status == -2) {
+                    $ret .= ' sts-junk';
+                }
                 $ret .= '" id="dmls' . $rs->comment_id . '">';
                 $ret .= '<a href="comment.php?id=' . $rs->comment_id . '">' . $rs->post_title . '</a>';
-                $info = array();
+                $info = [];
                 if ($large) {
                     if ($author) {
                         $info[] = __('by') . ' ' . $rs->comment_author;
@@ -139,7 +142,7 @@ class dmLastSpamsBehaviors
                 $core->auth->user_prefs->dmlastspams->last_spams_time,
                 $core->auth->user_prefs->dmlastspams->last_spams_recents);
             $ret .= '</div>';
-            $contents[] = new ArrayObject(array($ret));
+            $contents[] = new ArrayObject([$ret]);
         }
     }
 
@@ -169,14 +172,14 @@ class dmLastSpamsBehaviors
         // Add fieldset for plugin options
         $core->auth->user_prefs->addWorkspace('dmlastspams');
 
-        echo '<div class="fieldset"><h4>' . __('Last spams on dashboard') . '</h4>' .
+        echo '<div class="fieldset" id="dmlastspams"><h4>' . __('Last spams on dashboard') . '</h4>' .
 
         '<p>' .
         form::checkbox('dmlast_spams', 1, $core->auth->user_prefs->dmlastspams->last_spams) . ' ' .
         '<label for="dmlast_spams" class="classic">' . __('Display last spams') . '</label></p>' .
 
         '<p><label for="dmlast_spams_nb" class="classic">' . __('Number of last spams to display:') . '</label> ' .
-        form::field('dmlast_spams_nb', 2, 3, (integer) $core->auth->user_prefs->dmlastspams->last_spams_nb) .
+        form::number('dmlast_spams_nb', 1, 999, (integer) $core->auth->user_prefs->dmlastspams->last_spams_nb) .
         '</p>' .
 
         '<p>' .
@@ -192,7 +195,7 @@ class dmLastSpamsBehaviors
         '<label for="dmlast_spams_time" class="classic">' . __('Show times') . '</label></p>' .
 
         '<p><label for="dmlast_spams_recents" class="classic">' . __('Max age of spams to display (in hours):') . '</label> ' .
-        form::field('dmlast_spams_recents', 2, 3, (integer) $core->auth->user_prefs->dmlastspams->last_spams_recents) .
+        form::number('dmlast_spams_recents', 1, 96, (integer) $core->auth->user_prefs->dmlastspams->last_spams_recents) .
         '</p>' .
         '<p class="form-note">' . __('Leave empty to ignore age of spams') . '</p>' .
 

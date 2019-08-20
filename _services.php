@@ -23,7 +23,7 @@ class dmLastSpamsRest
      */
     public static function getSpamsCount($core, $get)
     {
-        $count = $core->blog->getComments(array('comment_status' => -2), true)->f(0);
+        $count = $core->blog->getComments(['comment_status' => -2], true)->f(0);
 
         $rsp      = new xmlTag('check');
         $rsp->ret = $count;
@@ -43,12 +43,12 @@ class dmLastSpamsRest
     {
         $last_id = !empty($get['last_id']) ? $get['last_id'] : -1;
 
-        $sqlp = array(
+        $sqlp = [
             'no_content'     => true, // content is not required
             'order'          => 'comment_id ASC',
             'sql'            => 'AND comment_id > ' . $last_id, // only new ones
             'comment_status' => -2
-        );
+        ];
         $core->auth->user_prefs->addWorkspace('dmlastspams');
 
         $rs    = $core->blog->getComments($sqlp);

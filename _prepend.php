@@ -22,6 +22,6 @@ if (!defined('DC_CONTEXT_ADMIN')) {return false;}
 $__autoload['dmLastSpamsRest'] = dirname(__FILE__) . '/_services.php';
 
 // Register REST methods
-$core->rest->addFunction('dmLastSpamsCheck', array('dmLastSpamsRest', 'checkNewSpams'));
-$core->rest->addFunction('dmLastSpamsRows', array('dmLastSpamsRest', 'getLastSpamsRows'));
-$core->rest->addFunction('dmLastSpamsCount', array('dmLastSpamsRest', 'getSpamsCount'));
+$core->rest->addFunction('dmLastSpamsCheck', ['dmLastSpamsRest', 'checkNewSpams']);
+$core->rest->addFunction('dmLastSpamsRows', ['dmLastSpamsRest', 'getLastSpamsRows']);
+$core->rest->addFunction('dmLastSpamsCount', ['dmLastSpamsRest', 'getSpamsCount']);

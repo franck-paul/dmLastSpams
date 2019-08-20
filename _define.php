@@ -18,10 +18,11 @@ $this->registerModule(
     "Display last spams on dashboard", // Description
     "Franck Paul",                     // Author
     '0.1',                             // Version
-    array(
-        'requires'    => array(array('core', '2.15')),
+    [
+        'requires'    => [['core', '2.15']],
         'permissions' => 'admin',
         'support'     => 'https://open-time.net/?q=dmlastspams', // Support URL
-        'type'        => 'plugin'
-    )
+        'type'        => 'plugin',
+        'settings'    => ['pref' => '#user-favorites.dmlastspams'] // Settings
+    ]
 );
