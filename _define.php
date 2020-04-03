@@ -19,10 +19,13 @@ $this->registerModule(
     "Franck Paul",                     // Author
     '0.1',                             // Version
     [
-        'requires'    => [['core', '2.15']],
+        'requires'    => [['core', '2.16']],
         'permissions' => 'admin',
-        'support'     => 'https://open-time.net/?q=dmlastspams', // Support URL
         'type'        => 'plugin',
-        'settings'    => ['pref' => '#user-favorites.dmlastspams'] // Settings
+        'details'     => 'https://open-time.net/?q=dmlastspams',       // Details URL
+        'support'     => 'https://github.com/franck-paul/dmlastspams', // Support URL
+        'settings'    => [                                             // Settings
+            'pref' => '#user-favorites.dmlastspams'
+        ]
     ]
 );

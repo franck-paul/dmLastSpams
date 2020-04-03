@@ -48,13 +48,13 @@ class dmLastSpamsBehaviors
         $core->auth->user_prefs->addWorkspace('dmlastspams');
 
         return
-        '<script type="text/javascript">' . "\n" .
-        dcPage::jsVar('dotclear.dmLastSpams_LastSpamId', $last_spam_id) .
-        dcPage::jsVar('dotclear.dmLastSpams_AutoRefresh', $core->auth->user_prefs->dmlastspams->last_spams_autorefresh) .
-        dcPage::jsVar('dotclear.dmLastSpams_Badge', $core->auth->user_prefs->dmlastspams->last_spams_badge) .
-        dcPage::jsVar('dotclear.dmLastSpams_LastCounter', 0) .
-        dcPage::jsVar('dotclear.dmLastSpams_SpamCount', -1) .
-        "</script>\n" .
+        dcPage::jsJson('dm_lastspams', [
+            'dmLastSpams_LastSpamId'  => $last_spam_id,
+            'dmLastSpams_AutoRefresh' => $core->auth->user_prefs->dmlastspams->last_spams_autorefresh,
+            'dmLastSpams_Badge'       => $core->auth->user_prefs->dmlastspams->last_spams_badge,
+            'dmLastSpams_LastCounter' => 0,
+            'dmLastSpams_SpamCount'   => -1
+        ]) .
         dcPage::jsLoad(urldecode(dcPage::getPF('dmLastSpams/js/service.js')), $core->getVersion('dmLastSpams')) .
         dcPage::cssLoad(urldecode(dcPage::getPF('dmLastSpams/css/style.css')), 'screen', $core->getVersion('dmLastSpams'));
     }

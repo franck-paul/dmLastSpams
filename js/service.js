@@ -1,4 +1,4 @@
-/*global $, dotclear */
+/*global $, dotclear, getData */
 'use strict';
 
 dotclear.dmLastSpamsCount = function() {
@@ -156,6 +156,7 @@ dotclear.dmLastSpamsView = function(line, action, e) {
 };
 
 $(function() {
+  Object.assign(dotclear, getData('dm_lastspams'));
   $.expandContent({
     lines: $('#last-spams li.line'),
     callback: dotclear.dmLastSpamsView
