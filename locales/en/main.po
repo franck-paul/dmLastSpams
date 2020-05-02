@@ -13,89 +13,69 @@ msgstr ""
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: ../git-plugins/dmLastSpams/_admin.php:17
 msgid "Display last spams on dashboard"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:17
 msgid "Last Spams Dashboard Module"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:101
 msgid "at"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:108
 msgid "%Y-%m-%d"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:111
 msgid "%H:%M"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:120
 msgid "See all spams"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:124
 msgid "No spams"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:125
 #, php-format
 msgid "since %d hour"
 msgid_plural "since %d hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:136
 msgid "Last spams"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:175
 msgid "Last spams on dashboard"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:179
 msgid "Display last spams"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:181
 msgid "Number of last spams to display:"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:187
 msgid "Show authors"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:191
 msgid "Show dates"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:195
 msgid "Show times"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:197
 msgid "Max age of spams to display (in hours):"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:200
 msgid "Leave empty to ignore age of spams"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:204
 msgid "Small screen"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:208
 msgid "Auto refresh"
 msgstr ""
 
-#: ../git-plugins/dmLastSpams/_admin.php:212
 msgid "Display badges (only if Auto refresh is enabled)"
 msgstr ""
