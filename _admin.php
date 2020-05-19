@@ -59,6 +59,26 @@ class dmLastSpamsBehaviors
         dcPage::cssLoad(urldecode(dcPage::getPF('dmLastSpams/css/style.css')), 'screen', $core->getVersion('dmLastSpams'));
     }
 
+    private static function composeSQLSince($core, $nb, $unit = 'HOUR')
+    {
+        switch ($core->con->syntax()) {
+            case 'sqlite':
+                $ret = 'datetime(\'' .
+                    $core->con->db_escape_string('now') . '\', \'' .
+                    $core->con->db_escape_string('-' . sprintf($nb) . ' ' . $unit) .
+                    '\')';
+                break;
+            case 'postgresql':
+                $ret = '(NOW() - \'' . $core->con->db_escape_string(sprintf($nb) . ' ' . $unit) . '\'::INTERVAL)';
+                break;
+            case 'mysql':
+            default:
+                $ret = '(NOW() - INTERVAL ' . sprintf($nb) . ' ' . $unit . ')';
+                break;
+        }
+        return $ret;
+    }
+
     public static function getLastSpams($core, $nb, $large, $author, $date, $time, $recents = 0,
         $last_id = -1, &$last_counter = 0) {
         $recents = (integer) $recents;
@@ -73,7 +93,7 @@ class dmLastSpamsBehaviors
         }
         $params['comment_status'] = -2;
         if ($recents > 0) {
-            $params['sql'] = ' AND comment_dt >= (NOW() - INTERVAL ' . sprintf($recents) . ' HOUR) ';
+            $params['sql'] = ' AND comment_dt >= ' . dmLastSpamsBehaviors::composeSQLSince($core, $recents) . ' ';
         }
         $rs = $core->blog->getComments($params, false);
         if (!$rs->isEmpty()) {
