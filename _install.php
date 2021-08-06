@@ -10,8 +10,9 @@
  * @copyright Franck Paul carnet.franck.paul@gmail.com
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
-if (!defined('DC_CONTEXT_ADMIN')) {return;}
+if (!defined('DC_CONTEXT_ADMIN')) {
+    return;
+}
 
 $new_version = $core->plugins->moduleInfo('dmLastSpams', 'version');
 $old_version = $core->getVersion('dmLastSpams');
@@ -20,8 +21,7 @@ if (version_compare($old_version, $new_version, '>=')) {
     return;
 }
 
-try
-{
+try {
     $core->auth->user_prefs->addWorkspace('dmlastspams');
 
     // Default prefs for last spams
@@ -41,4 +41,5 @@ try
 } catch (Exception $e) {
     $core->error->add($e->getMessage());
 }
+
 return false;

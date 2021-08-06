@@ -2,18 +2,21 @@ ul.expandable {
   list-style-type: none;
   padding-left: 0.5em;
 }
+
 #last-spams li.dmls-new {
   animation-name: dmls-new;
   animation-duration: 2s;
 }
+
 #last-spams li.dmls-new::after {
-  content: " \02605";
-  /* ★ */
+  content: " \02605"; /* ★ */
 }
+
 @keyframes dmls-new {
   from {
     opacity: 0.2;
   }
+
   to {
     opacity: 1;
   }
