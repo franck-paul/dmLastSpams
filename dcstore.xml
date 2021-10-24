@@ -6,7 +6,7 @@
     <desc>Display last spams on dashboard</desc>
     <file>https://github.com/franck-paul/dmLastSpams/releases/download/0.3/plugin-dmLastSpams-0.3.zip</file>
     <da:dcmin>2.19</da:dcmin>
-    <da:details>https://open-time.net/?q=dmLastSpams</da:details>
-    <da:support>https://github.com/franck-paul/dmLastSpams</da:support>
+    <da:details>https://open-time.net/?q=dmlastspams</da:details>
+    <da:support>https://github.com/franck-paul/dmlastspams</da:support>
   </module>
 </modules>
