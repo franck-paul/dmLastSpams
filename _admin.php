@@ -18,26 +18,24 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 __('Last Spams Dashboard Module') . __('Display last spams on dashboard');
 
 // Dashboard behaviours
-$core->addBehavior('adminDashboardHeaders', ['dmLastSpamsBehaviors', 'adminDashboardHeaders']);
-$core->addBehavior('adminDashboardContents', ['dmLastSpamsBehaviors', 'adminDashboardContents']);
+dcCore::app()->addBehavior('adminDashboardHeaders', ['dmLastSpamsBehaviors', 'adminDashboardHeaders']);
+dcCore::app()->addBehavior('adminDashboardContents', ['dmLastSpamsBehaviors', 'adminDashboardContents']);
 
-$core->addBehavior('adminAfterDashboardOptionsUpdate', ['dmLastSpamsBehaviors', 'adminAfterDashboardOptionsUpdate']);
-$core->addBehavior('adminDashboardOptionsForm', ['dmLastSpamsBehaviors', 'adminDashboardOptionsForm']);
+dcCore::app()->addBehavior('adminAfterDashboardOptionsUpdate', ['dmLastSpamsBehaviors', 'adminAfterDashboardOptionsUpdate']);
+dcCore::app()->addBehavior('adminDashboardOptionsForm', ['dmLastSpamsBehaviors', 'adminDashboardOptionsForm']);
 
 # BEHAVIORS
 class dmLastSpamsBehaviors
 {
     public static function adminDashboardHeaders()
     {
-        global $core;
-
         $sqlp = [
             'limit'      => 1,                 // only the last one
             'no_content' => true,              // content is not required
-            'order'      => 'comment_id DESC' // get last first
+            'order'      => 'comment_id DESC', // get last first
         ];
 
-        $rs = $core->blog->getComments($sqlp);
+        $rs = dcCore::app()->blog->getComments($sqlp);
 
         if ($rs->count()) {
             $rs->fetch();
@@ -46,32 +44,32 @@ class dmLastSpamsBehaviors
             $last_spam_id = -1;
         }
 
-        $core->auth->user_prefs->addWorkspace('dmlastspams');
+        dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
 
         return
         dcPage::jsJson('dm_lastspams', [
             'dmLastSpams_LastSpamId'  => $last_spam_id,
-            'dmLastSpams_AutoRefresh' => $core->auth->user_prefs->dmlastspams->last_spams_autorefresh,
-            'dmLastSpams_Badge'       => $core->auth->user_prefs->dmlastspams->last_spams_badge,
+            'dmLastSpams_AutoRefresh' => dcCore::app()->auth->user_prefs->dmlastspams->last_spams_autorefresh,
+            'dmLastSpams_Badge'       => dcCore::app()->auth->user_prefs->dmlastspams->last_spams_badge,
             'dmLastSpams_LastCounter' => 0,
-            'dmLastSpams_SpamCount'   => -1
+            'dmLastSpams_SpamCount'   => -1,
         ]) .
-        dcPage::jsLoad(urldecode(dcPage::getPF('dmLastSpams/js/service.js')), $core->getVersion('dmLastSpams')) .
-        dcPage::cssLoad(urldecode(dcPage::getPF('dmLastSpams/css/style.css')), 'screen', $core->getVersion('dmLastSpams'));
+        dcPage::jsModuleLoad('dmLastSpams/js/service.js', dcCore::app()->getVersion('dmLastSpams')) .
+        dcPage::cssModuleLoad('dmLastSpams/css/style.css', 'screen', dcCore::app()->getVersion('dmLastSpams'));
     }
 
     private static function composeSQLSince($core, $nb, $unit = 'HOUR')
     {
-        switch ($core->con->syntax()) {
+        switch (dcCore::app()->con->syntax()) {
             case 'sqlite':
                 $ret = 'datetime(\'' .
-                    $core->con->db_escape_string('now') . '\', \'' .
-                    $core->con->db_escape_string('-' . sprintf($nb) . ' ' . $unit) .
+                    dcCore::app()->con->db_escape_string('now') . '\', \'' .
+                    dcCore::app()->con->db_escape_string('-' . sprintf($nb) . ' ' . $unit) .
                     '\')';
 
                 break;
             case 'postgresql':
-                $ret = '(NOW() - \'' . $core->con->db_escape_string(sprintf($nb) . ' ' . $unit) . '\'::INTERVAL)';
+                $ret = '(NOW() - \'' . dcCore::app()->con->db_escape_string(sprintf($nb) . ' ' . $unit) . '\'::INTERVAL)';
 
                 break;
             case 'mysql':
@@ -84,11 +82,19 @@ class dmLastSpamsBehaviors
         return $ret;
     }
 
-    public static function getLastSpams($core, $nb, $large, $author, $date, $time, $recents = 0,
-        $last_id = -1, &$last_counter = 0)
-    {
-        $recents = (integer) $recents;
-        $nb      = (integer) $nb;
+    public static function getLastSpams(
+        $core,
+        $nb,
+        $large,
+        $author,
+        $date,
+        $time,
+        $recents = 0,
+        $last_id = -1,
+        &$last_counter = 0
+    ) {
+        $recents = (int) $recents;
+        $nb      = (int) $nb;
 
         // Get last $nb comments
         $params = [];
@@ -99,9 +105,9 @@ class dmLastSpamsBehaviors
         }
         $params['comment_status'] = -2;
         if ($recents > 0) {
-            $params['sql'] = ' AND comment_dt >= ' . dmLastSpamsBehaviors::composeSQLSince($core, $recents) . ' ';
+            $params['sql'] = ' AND comment_dt >= ' . dmLastSpamsBehaviors::composeSQLSince(dcCore::app(), $recents) . ' ';
         }
-        $rs = $core->blog->getComments($params, false);
+        $rs = dcCore::app()->blog->getComments($params, false);
         if (!$rs->isEmpty()) {
             $ret = '<ul>';
             while ($rs->fetch()) {
@@ -121,10 +127,10 @@ class dmLastSpamsBehaviors
                         $info[] = __('by') . ' ' . $rs->comment_author;
                     }
                     if ($date) {
-                        $info[] = __('on') . ' ' . dt::dt2str($core->blog->settings->system->date_format, $rs->comment_dt);
+                        $info[] = __('on') . ' ' . dt::dt2str(dcCore::app()->blog->settings->system->date_format, $rs->comment_dt);
                     }
                     if ($time) {
-                        $info[] = __('at') . ' ' . dt::dt2str($core->blog->settings->system->time_format, $rs->comment_dt);
+                        $info[] = __('at') . ' ' . dt::dt2str(dcCore::app()->blog->settings->system->time_format, $rs->comment_dt);
                     }
                 } else {
                     if ($author) {
@@ -155,18 +161,20 @@ class dmLastSpamsBehaviors
     public static function adminDashboardContents($core, $contents)
     {
         // Add modules to the contents stack
-        $core->auth->user_prefs->addWorkspace('dmlastspams');
-        if ($core->auth->user_prefs->dmlastspams->last_spams) {
-            $class = ($core->auth->user_prefs->dmlastspams->last_spams_large ? 'medium' : 'small');
+        dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
+        if (dcCore::app()->auth->user_prefs->dmlastspams->last_spams) {
+            $class = (dcCore::app()->auth->user_prefs->dmlastspams->last_spams_large ? 'medium' : 'small');
             $ret   = '<div id="last-spams" class="box ' . $class . '">' .
             '<h3>' . '<img src="' . urldecode(dcPage::getPF('dmLastSpams/icon.png')) . '" alt="" />' . ' ' . __('Last spams') . '</h3>';
-            $ret .= dmLastSpamsBehaviors::getLastSpams($core,
-                $core->auth->user_prefs->dmlastspams->last_spams_nb,
-                $core->auth->user_prefs->dmlastspams->last_spams_large,
-                $core->auth->user_prefs->dmlastspams->last_spams_author,
-                $core->auth->user_prefs->dmlastspams->last_spams_date,
-                $core->auth->user_prefs->dmlastspams->last_spams_time,
-                $core->auth->user_prefs->dmlastspams->last_spams_recents);
+            $ret .= dmLastSpamsBehaviors::getLastSpams(
+                dcCore::app(),
+                dcCore::app()->auth->user_prefs->dmlastspams->last_spams_nb,
+                dcCore::app()->auth->user_prefs->dmlastspams->last_spams_large,
+                dcCore::app()->auth->user_prefs->dmlastspams->last_spams_author,
+                dcCore::app()->auth->user_prefs->dmlastspams->last_spams_date,
+                dcCore::app()->auth->user_prefs->dmlastspams->last_spams_time,
+                dcCore::app()->auth->user_prefs->dmlastspams->last_spams_recents
+            );
             $ret .= '</div>';
             $contents[] = new ArrayObject([$ret]);
         }
@@ -174,68 +182,66 @@ class dmLastSpamsBehaviors
 
     public static function adminAfterDashboardOptionsUpdate($userID)
     {
-        global $core;
-
         // Get and store user's prefs for plugin options
-        $core->auth->user_prefs->addWorkspace('dmlastspams');
+        dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
 
         try {
-            $core->auth->user_prefs->dmlastspams->put('last_spams', !empty($_POST['dmlast_spams']), 'boolean');
-            $core->auth->user_prefs->dmlastspams->put('last_spams_nb', (integer) $_POST['dmlast_spams_nb'], 'integer');
-            $core->auth->user_prefs->dmlastspams->put('last_spams_large', empty($_POST['dmlast_spams_small']), 'boolean');
-            $core->auth->user_prefs->dmlastspams->put('last_spams_author', !empty($_POST['dmlast_spams_author']), 'boolean');
-            $core->auth->user_prefs->dmlastspams->put('last_spams_date', !empty($_POST['dmlast_spams_date']), 'boolean');
-            $core->auth->user_prefs->dmlastspams->put('last_spams_time', !empty($_POST['dmlast_spams_time']), 'boolean');
-            $core->auth->user_prefs->dmlastspams->put('last_spams_recents', (integer) $_POST['dmlast_spams_recents'], 'integer');
-            $core->auth->user_prefs->dmlastspams->put('last_spams_autorefresh', !empty($_POST['dmlast_spams_autorefresh']), 'boolean');
-            $core->auth->user_prefs->dmlastspams->put('last_spams_badge', !empty($_POST['dmlast_spams_badge']), 'boolean');
+            dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams', !empty($_POST['dmlast_spams']), 'boolean');
+            dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams_nb', (int) $_POST['dmlast_spams_nb'], 'integer');
+            dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams_large', empty($_POST['dmlast_spams_small']), 'boolean');
+            dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams_author', !empty($_POST['dmlast_spams_author']), 'boolean');
+            dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams_date', !empty($_POST['dmlast_spams_date']), 'boolean');
+            dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams_time', !empty($_POST['dmlast_spams_time']), 'boolean');
+            dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams_recents', (int) $_POST['dmlast_spams_recents'], 'integer');
+            dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams_autorefresh', !empty($_POST['dmlast_spams_autorefresh']), 'boolean');
+            dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams_badge', !empty($_POST['dmlast_spams_badge']), 'boolean');
         } catch (Exception $e) {
-            $core->error->add($e->getMessage());
+            dcCore::app()->error->add($e->getMessage());
         }
     }
 
     public static function adminDashboardOptionsForm($core)
     {
         // Add fieldset for plugin options
-        $core->auth->user_prefs->addWorkspace('dmlastspams');
+        dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
 
         echo '<div class="fieldset" id="dmlastspams"><h4>' . __('Last spams on dashboard') . '</h4>' .
 
         '<p>' .
-        form::checkbox('dmlast_spams', 1, $core->auth->user_prefs->dmlastspams->last_spams) . ' ' .
+        form::checkbox('dmlast_spams', 1, dcCore::app()->auth->user_prefs->dmlastspams->last_spams) . ' ' .
         '<label for="dmlast_spams" class="classic">' . __('Display last spams') . '</label></p>' .
 
         '<p><label for="dmlast_spams_nb" class="classic">' . __('Number of last spams to display:') . '</label> ' .
-        form::number('dmlast_spams_nb', 1, 999, (integer) $core->auth->user_prefs->dmlastspams->last_spams_nb) .
+        form::number('dmlast_spams_nb', 1, 999, dcCore::app()->auth->user_prefs->dmlastspams->last_spams_nb) .
         '</p>' .
 
         '<p>' .
-        form::checkbox('dmlast_spams_author', 1, $core->auth->user_prefs->dmlastspams->last_spams_author) . ' ' .
+        form::checkbox('dmlast_spams_author', 1, dcCore::app()->auth->user_prefs->dmlastspams->last_spams_author) . ' ' .
         '<label for="dmlast_spams_author" class="classic">' . __('Show authors') . '</label></p>' .
 
         '<p>' .
-        form::checkbox('dmlast_spams_date', 1, $core->auth->user_prefs->dmlastspams->last_spams_date) . ' ' .
+        form::checkbox('dmlast_spams_date', 1, dcCore::app()->auth->user_prefs->dmlastspams->last_spams_date) . ' ' .
         '<label for="dmlast_spams_date" class="classic">' . __('Show dates') . '</label></p>' .
 
         '<p>' .
-        form::checkbox('dmlast_spams_time', 1, $core->auth->user_prefs->dmlastspams->last_spams_time) . ' ' .
+        form::checkbox('dmlast_spams_time', 1, dcCore::app()->auth->user_prefs->dmlastspams->last_spams_time) . ' ' .
         '<label for="dmlast_spams_time" class="classic">' . __('Show times') . '</label></p>' .
 
         '<p><label for="dmlast_spams_recents" class="classic">' . __('Max age of spams to display (in hours):') . '</label> ' .
-        form::number('dmlast_spams_recents', 1, 96, (integer) $core->auth->user_prefs->dmlastspams->last_spams_recents) .
+        form::number('dmlast_spams_recents', 1, 96, dcCore::app()->auth->user_prefs->dmlastspams->last_spams_recents) .
         '</p>' .
         '<p class="form-note">' . __('Leave empty to ignore age of spams') . '</p>' .
 
         '<p>' .
-        form::checkbox('dmlast_spams_small', 1, !$core->auth->user_prefs->dmlastspams->last_spams_large) . ' ' .
+        form::checkbox('dmlast_spams_small', 1, !dcCore::app()->auth->user_prefs->dmlastspams->last_spams_large) . ' ' .
         '<label for="dmlast_spams_small" class="classic">' . __('Small screen') . '</label></p>' .
 
         '<p>' .
-        form::checkbox('dmlast_spams_autorefresh', 1, $core->auth->user_prefs->dmlastspams->last_spams_autorefresh) . ' ' .
+        form::checkbox('dmlast_spams_autorefresh', 1, dcCore::app()->auth->user_prefs->dmlastspams->last_spams_autorefresh) . ' ' .
         '<label for="dmlast_spams_autorefresh" class="classic">' . __('Auto refresh') . '</label></p>' .
 
         '<p>' .
-        form::checkbox('dmlast_spams_badge', 1, $core->auth->user_prefs->dmlastspams->last_spams_badge) . ' ' .
+        form::checkbox('dmlast_spams_badge', 1, dcCore::app()->auth->user_prefs->dmlastspams->last_spams_badge) . ' ' .
         '<label for="dmlast_spams_badge" class="classic">' . __('Display badges (only if Auto refresh is enabled)') . '</label></p>' .
 
             '</div>';

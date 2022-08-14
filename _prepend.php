@@ -22,9 +22,9 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 
 // Admin mode
 
-$__autoload['dmLastSpamsRest'] = dirname(__FILE__) . '/_services.php';
+$__autoload['dmLastSpamsRest'] = __DIR__ . '/_services.php';
 
 // Register REST methods
-$core->rest->addFunction('dmLastSpamsCheck', ['dmLastSpamsRest', 'checkNewSpams']);
-$core->rest->addFunction('dmLastSpamsRows', ['dmLastSpamsRest', 'getLastSpamsRows']);
-$core->rest->addFunction('dmLastSpamsCount', ['dmLastSpamsRest', 'getSpamsCount']);
+dcCore::app()->rest->addFunction('dmLastSpamsCheck', ['dmLastSpamsRest', 'checkNewSpams']);
+dcCore::app()->rest->addFunction('dmLastSpamsRows', ['dmLastSpamsRest', 'getLastSpamsRows']);
+dcCore::app()->rest->addFunction('dmLastSpamsCount', ['dmLastSpamsRest', 'getSpamsCount']);

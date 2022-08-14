@@ -17,42 +17,41 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 class dmLastSpamsRest
 {
     /**
-     * Serve method to get number of spams for current blog.
+     * Gets the spams count.
      *
-     * @param     core     <b>dcCore</b>     dcCore instance
-     * @param     get     <b>array</b>     cleaned $_GET
+     * @param      array   $get    The get
+     *
+     * @return     xmlTag  The spams count.
      */
-    public static function getSpamsCount($core, $get)
+    public static function getSpamsCount($get)
     {
-        $count = $core->blog->getComments(['comment_status' => -2], true)->f(0);
-
-        $rsp      = new xmlTag('check');
-        $rsp->ret = $count;
-
-        return $rsp;
+        return [
+            'ret' => true,
+            'nb'  => dcCore::app()->blog->getComments(['comment_status' => -2], true)->f(0),
+        ];
     }
 
     /**
      * Serve method to check new spams for current blog.
      *
-     * @param    core    <b>dcCore</b>    dcCore instance
-     * @param    get        <b>array</b>    cleaned $_GET
+     * @param      array   $get    The get
      *
-     * @return    <b>xmlTag</b>    XML representation of response
+     * @return     xmlTag  The xml tag.
      */
-    public static function checkNewSpams($core, $get)
+    public static function checkNewSpams($get)
     {
-        $last_id = !empty($get['last_id']) ? $get['last_id'] : -1;
+        $last_id      = !empty($get['last_id']) ? $get['last_id'] : -1;
+        $last_spam_id = -1;
 
         $sqlp = [
             'no_content'     => true, // content is not required
             'order'          => 'comment_id ASC',
             'sql'            => 'AND comment_id > ' . $last_id, // only new ones
-            'comment_status' => -2
+            'comment_status' => -2,
         ];
-        $core->auth->user_prefs->addWorkspace('dmlastspams');
+        dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
 
-        $rs    = $core->blog->getComments($sqlp);
+        $rs    = dcCore::app()->blog->getComments($sqlp);
         $count = $rs->count();
 
         if ($count) {
@@ -60,53 +59,51 @@ class dmLastSpamsRest
                 $last_spam_id = $rs->comment_id;
             }
         }
-        $rsp      = new xmlTag('check');
-        $rsp->ret = $count;
-        if ($count) {
-            $rsp->last_id = $last_spam_id;
-        }
 
-        return $rsp;
+        return [
+            'ret'     => true,
+            'nb'      => $count,
+            'last_id' => $last_spam_id,
+        ];
     }
 
     /**
-     * Serve method to get new spams rows for current blog.
+     * Gets the last spams rows.
      *
-     * @param    core    <b>dcCore</b>    dcCore instance
-     * @param    get        <b>array</b>    cleaned $_GET
+     * @param      array   $get    The get
      *
-     * @return    <b>xmlTag</b>    XML representation of response
+     * @return     xmlTag  The last spams rows.
      */
-    public static function getLastSpamsRows($core, $get)
+    public static function getLastSpamsRows($get)
     {
-        $rsp      = new xmlTag('rows');
-        $rsp->ret = 0;
-
         $stored_id = !empty($get['stored_id']) ? $get['stored_id'] : -1;
         $last_id   = !empty($get['last_id']) ? $get['last_id'] : -1;
         $counter   = !empty($get['counter']) ? $get['counter'] : 0;
 
-        $rsp->stored_id = $stored_id;
-        $rsp->last_id   = $last_id;
+        $payload = [
+            'ret'       => true,
+            'counter'   => 0,
+            'stored_id' => $stored_id,
+            'last_id'   => $last_id,
+        ];
 
         if ($stored_id == -1) {
-            return $rsp;
+            return $payload;
         }
 
-        $core->auth->user_prefs->addWorkspace('dmlastspams');
-        $ret = dmLastSpamsBehaviors::getLastSpams($core,
-            $core->auth->user_prefs->dmlastspams->last_spams_nb,
-            $core->auth->user_prefs->dmlastspams->last_spams_large,
-            $core->auth->user_prefs->dmlastspams->last_spams_author,
-            $core->auth->user_prefs->dmlastspams->last_spams_date,
-            $core->auth->user_prefs->dmlastspams->last_spams_time,
-            $core->auth->user_prefs->dmlastspams->last_spams_recents,
-            $stored_id, $counter);
+        dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
+        $list = dmLastSpamsBehaviors::getLastSpams(
+            dcCore::app(),
+            dcCore::app()->auth->user_prefs->dmlastspams->last_spams_nb,
+            dcCore::app()->auth->user_prefs->dmlastspams->last_spams_large,
+            dcCore::app()->auth->user_prefs->dmlastspams->last_spams_author,
+            dcCore::app()->auth->user_prefs->dmlastspams->last_spams_date,
+            dcCore::app()->auth->user_prefs->dmlastspams->last_spams_time,
+            dcCore::app()->auth->user_prefs->dmlastspams->last_spams_recents,
+            $stored_id,
+            $counter
+        );
 
-        $rsp->list    = $ret;
-        $rsp->counter = $counter;
-        $rsp->ret     = 1;
-
-        return $rsp;
+        return array_merge($payload, ['list' => $list, 'counter' => $counter]);
     }
 }
