@@ -33,6 +33,58 @@ dotclear.dmLastSpamsCount = () => {
   );
 };
 
+dotclear.dmLastSpamsRows = (last_id) => {
+  dotclear.services(
+    'dmLastSpamsRows',
+    (data) => {
+      const response = JSON.parse(data);
+      if (response?.success) {
+        if (response?.payload.ret) {
+          const counter = response.payload.count;
+          // Replace current list with the new one
+          if ($('#last-spams ul').length) {
+            $('#last-spams ul').remove();
+          }
+          if ($('#last-spams p').length) {
+            $('#last-spams p').remove();
+          }
+          if (counter > 0) {
+            dotclear.dmLastSpams_LastCounter = Number(dotclear.dmLastSpams_LastCounter) + counter;
+          }
+          $('#last-spams h3').after(response.payload.list);
+          if (dotclear.dmLastSpams_Badge) {
+            // Badge on module
+            dotclear.badge($('#last-spams'), {
+              id: 'dmls',
+              value: dotclear.dmLastSpams_LastCounter,
+              remove: dotclear.dmLastSpams_LastCounter == 0,
+            });
+          }
+          // Bind every new lines for viewing comment content
+          $.expandContent({
+            lines: $('#last-spams li.line'),
+            callback: dotclear.dmLastSpamsView,
+          });
+          $('#last-spams ul').addClass('expandable');
+        }
+      } else {
+        console.log(dotclear.debug && response?.message ? response.message : 'Dotclear REST server error');
+        return;
+      }
+    },
+    (error) => {
+      console.log(error);
+    },
+    true, // Use GET method
+    {
+      json: 1,
+      stored_id: dotclear.dmLastSpams_LastSpamId,
+      last_id: last_id,
+      last_counter: dotclear.dmLastSpams_LastCounter,
+    },
+  );
+};
+
 dotclear.dmLastSpamsCheck = () => {
   dotclear.services(
     'dmLastSpamsCheck',
@@ -43,55 +95,7 @@ dotclear.dmLastSpamsCheck = () => {
           const new_spams = response.payload.nb;
           if (new_spams > 0) {
             // Get new list
-            dotclear.services(
-              'dmLastSpamsRows',
-              (data) => {
-                const response = JSON.parse(data);
-                if (response?.success) {
-                  if (response?.payload.ret) {
-                    const counter = response.payload.count;
-                    // Replace current list with the new one
-                    if ($('#last-spams ul').length) {
-                      $('#last-spams ul').remove();
-                    }
-                    if ($('#last-spams p').length) {
-                      $('#last-spams p').remove();
-                    }
-                    if (counter > 0) {
-                      dotclear.dmLastSpams_LastCounter = Number(dotclear.dmLastSpams_LastCounter) + counter;
-                    }
-                    $('#last-spams h3').after(response.payload.list);
-                    if (dotclear.dmLastSpams_Badge) {
-                      // Badge on module
-                      dotclear.badge($('#last-spams'), {
-                        id: 'dmls',
-                        value: dotclear.dmLastSpams_LastCounter,
-                        remove: dotclear.dmLastSpams_LastCounter == 0,
-                      });
-                    }
-                    // Bind every new lines for viewing comment content
-                    $.expandContent({
-                      lines: $('#last-spams li.line'),
-                      callback: dotclear.dmLastSpamsView,
-                    });
-                    $('#last-spams ul').addClass('expandable');
-                  }
-                } else {
-                  console.log(dotclear.debug && response?.message ? response.message : 'Dotclear REST server error');
-                  return;
-                }
-              },
-              (error) => {
-                console.log(error);
-              },
-              true, // Use GET method
-              {
-                json: 1,
-                stored_id: dotclear.dmLastSpams_LastSpamId,
-                last_id: response.payload.last_id,
-                last_counter: dotclear.dmLastSpams_LastCounter,
-              },
-            );
+            dotclear.dmLastSpamsRows(response.payload.last_id);
 
             // Store last comment id
             dotclear.dmLastSpams_LastSpamId = response.payload.last_id;
@@ -165,6 +169,7 @@ $(() => {
     dotclear.dmLastSpamsCheck();
     // Auto refresh requested : Set 30 seconds interval between two checks for new comments and spam counter check
     dotclear.dmLastSpams_Timer = setInterval(dotclear.dmLastSpamsCheck, 30 * 1000);
+
     if (dotclear.dmLastSpams_Badge) {
       $('#last-spams').addClass('badgeable');
       const icon_com = $('#dashboard-main #icons p a[href="comments.php"]');
