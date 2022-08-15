@@ -18,7 +18,7 @@ $this->registerModule(
     'Last Spams Dashboard Module',     // Name
     'Display last spams on dashboard', // Description
     'Franck Paul',                     // Author
-    '0.4',                             // Version
+    '0.4.1',
     [
         'requires'    => [['core', '2.23']],
         'permissions' => 'admin',

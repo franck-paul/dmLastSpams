@@ -5,24 +5,28 @@ dotclear.dmLastSpamsCount = () => {
   dotclear.services(
     'dmLastSpamsCount',
     (data) => {
-      const response = JSON.parse(data);
-      if (response?.success) {
-        if (response?.payload.ret) {
-          const nb_spams = response.payload.nb;
-          if (nb_spams !== undefined && nb_spams != dotclear.dmLastSpams_SpamCount) {
-            dotclear.badge($('#dashboard-main #icons p a[href="comments.php"]'), {
-              id: 'dmls',
-              remove: nb_spams == 0,
-              value: nb_spams,
-              sibling: true,
-              icon: true,
-            });
-            dotclear.dmLastSpams_SpamCount = nb_spams;
+      try {
+        const response = JSON.parse(data);
+        if (response?.success) {
+          if (response?.payload.ret) {
+            const nb_spams = response.payload.nb;
+            if (nb_spams !== undefined && nb_spams != dotclear.dmLastSpams_SpamCount) {
+              dotclear.badge($('#dashboard-main #icons p a[href="comments.php"]'), {
+                id: 'dmls',
+                remove: nb_spams == 0,
+                value: nb_spams,
+                sibling: true,
+                icon: true,
+              });
+              dotclear.dmLastSpams_SpamCount = nb_spams;
+            }
           }
+        } else {
+          console.log(dotclear.debug && response?.message ? response.message : 'Dotclear REST server error');
+          return;
         }
-      } else {
-        console.log(dotclear.debug && response?.message ? response.message : 'Dotclear REST server error');
-        return;
+      } catch (e) {
+        console.log(e);
       }
     },
     (error) => {
@@ -37,39 +41,43 @@ dotclear.dmLastSpamsRows = (last_id) => {
   dotclear.services(
     'dmLastSpamsRows',
     (data) => {
-      const response = JSON.parse(data);
-      if (response?.success) {
-        if (response?.payload.ret) {
-          const counter = response.payload.count;
-          // Replace current list with the new one
-          if ($('#last-spams ul').length) {
-            $('#last-spams ul').remove();
-          }
-          if ($('#last-spams p').length) {
-            $('#last-spams p').remove();
-          }
-          if (counter > 0) {
-            dotclear.dmLastSpams_LastCounter = Number(dotclear.dmLastSpams_LastCounter) + counter;
-          }
-          $('#last-spams h3').after(response.payload.list);
-          if (dotclear.dmLastSpams_Badge) {
-            // Badge on module
-            dotclear.badge($('#last-spams'), {
-              id: 'dmls',
-              value: dotclear.dmLastSpams_LastCounter,
-              remove: dotclear.dmLastSpams_LastCounter == 0,
+      try {
+        const response = JSON.parse(data);
+        if (response?.success) {
+          if (response?.payload.ret) {
+            const counter = response.payload.counter;
+            // Replace current list with the new one
+            if ($('#last-spams ul').length) {
+              $('#last-spams ul').remove();
+            }
+            if ($('#last-spams p').length) {
+              $('#last-spams p').remove();
+            }
+            if (counter > 0) {
+              dotclear.dmLastSpams_LastCounter = Number(dotclear.dmLastSpams_LastCounter) + counter;
+            }
+            $('#last-spams h3').after(response.payload.list);
+            if (dotclear.dmLastSpams_Badge) {
+              // Badge on module
+              dotclear.badge($('#last-spams'), {
+                id: 'dmls',
+                value: dotclear.dmLastSpams_LastCounter,
+                remove: dotclear.dmLastSpams_LastCounter == 0,
+              });
+            }
+            // Bind every new lines for viewing comment content
+            $.expandContent({
+              lines: $('#last-spams li.line'),
+              callback: dotclear.dmLastSpamsView,
             });
+            $('#last-spams ul').addClass('expandable');
           }
-          // Bind every new lines for viewing comment content
-          $.expandContent({
-            lines: $('#last-spams li.line'),
-            callback: dotclear.dmLastSpamsView,
-          });
-          $('#last-spams ul').addClass('expandable');
+        } else {
+          console.log(dotclear.debug && response?.message ? response.message : 'Dotclear REST server error');
+          return;
         }
-      } else {
-        console.log(dotclear.debug && response?.message ? response.message : 'Dotclear REST server error');
-        return;
+      } catch (e) {
+        console.log(e);
       }
     },
     (error) => {
@@ -89,21 +97,25 @@ dotclear.dmLastSpamsCheck = () => {
   dotclear.services(
     'dmLastSpamsCheck',
     (data) => {
-      const response = JSON.parse(data);
-      if (response?.success) {
-        if (response?.payload.ret) {
-          const new_spams = response.payload.nb;
-          if (new_spams > 0) {
-            // Get new list
-            dotclear.dmLastSpamsRows(response.payload.last_id);
+      try {
+        const response = JSON.parse(data);
+        if (response?.success) {
+          if (response?.payload.ret) {
+            const new_spams = response.payload.nb;
+            if (new_spams > 0) {
+              // Get new list
+              dotclear.dmLastSpamsRows(response.payload.last_id);
 
-            // Store last comment id
-            dotclear.dmLastSpams_LastSpamId = response.payload.last_id;
+              // Store last comment id
+              dotclear.dmLastSpams_LastSpamId = response.payload.last_id;
+            }
           }
+        } else {
+          console.log(dotclear.debug && response?.message ? response.message : 'Dotclear REST server error');
+          return;
         }
-      } else {
-        console.log(dotclear.debug && response?.message ? response.message : 'Dotclear REST server error');
-        return;
+      } catch (e) {
+        console.log(e);
       }
     },
     (error) => {
