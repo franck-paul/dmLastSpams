@@ -15,20 +15,22 @@ if (!defined('DC_RC_PATH')) {
 }
 
 $this->registerModule(
-    'Last Spams Dashboard Module',     // Name
-    'Display last spams on dashboard', // Description
-    'Franck Paul',                     // Author
-    '0.4.1',
+    'Last Spams Dashboard Module',
+    'Display last spams on dashboard',
+    'Franck Paul',
+    '0.5',
     [
-        'requires'    => [['core', '2.23']],
-        'permissions' => 'admin',
-        'type'        => 'plugin',
-        'settings'    => [                                             // Settings
+        'requires'    => [['core', '2.24']],
+        'permissions' => dcCore::app()->auth->makePermissions([
+            dcAuth::PERMISSION_ADMIN,
+        ]),
+        'type'     => 'plugin',
+        'settings' => [
             'pref' => '#user-favorites.dmlastspams',
         ],
 
-        'details'    => 'https://open-time.net/?q=dmlastspams',       // Details URL
-        'support'    => 'https://github.com/franck-paul/dmlastspams', // Support URL
+        'details'    => 'https://open-time.net/?q=dmlastspams',
+        'support'    => 'https://github.com/franck-paul/dmlastspams',
         'repository' => 'https://raw.githubusercontent.com/franck-paul/dmlastspams/master/dcstore.xml',
     ]
 );

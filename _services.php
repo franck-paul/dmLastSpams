@@ -19,15 +19,13 @@ class dmLastSpamsRest
     /**
      * Gets the spams count.
      *
-     * @param      array   $get    The get
-     *
-     * @return     xmlTag  The spams count.
+     * @return     array   The payload.
      */
-    public static function getSpamsCount($get)
+    public static function getSpamsCount(): array
     {
         return [
             'ret' => true,
-            'nb'  => dcCore::app()->blog->getComments(['comment_status' => -2], true)->f(0),
+            'nb'  => dcCore::app()->blog->getComments(['comment_status' => dcBlog::COMMENT_JUNK], true)->f(0),
         ];
     }
 
@@ -36,9 +34,9 @@ class dmLastSpamsRest
      *
      * @param      array   $get    The get
      *
-     * @return     xmlTag  The xml tag.
+     * @return     array   The payload.
      */
-    public static function checkNewSpams($get)
+    public static function checkNewSpams($get): array
     {
         $last_id      = !empty($get['last_id']) ? $get['last_id'] : -1;
         $last_spam_id = -1;
@@ -47,7 +45,7 @@ class dmLastSpamsRest
             'no_content'     => true, // content is not required
             'order'          => 'comment_id ASC',
             'sql'            => 'AND comment_id > ' . $last_id, // only new ones
-            'comment_status' => -2,
+            'comment_status' => dcBlog::COMMENT_JUNK,
         ];
         dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
 
@@ -72,9 +70,9 @@ class dmLastSpamsRest
      *
      * @param      array   $get    The get
      *
-     * @return     xmlTag  The last spams rows.
+     * @return     array   The payload.
      */
-    public static function getLastSpamsRows($get)
+    public static function getLastSpamsRows($get): array
     {
         $stored_id = !empty($get['stored_id']) ? $get['stored_id'] : -1;
         $last_id   = !empty($get['last_id']) ? $get['last_id'] : -1;

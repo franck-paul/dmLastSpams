@@ -17,13 +17,6 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 // dead but useful code, in order to have translations
 __('Last Spams Dashboard Module') . __('Display last spams on dashboard');
 
-// Dashboard behaviours
-dcCore::app()->addBehavior('adminDashboardHeaders', ['dmLastSpamsBehaviors', 'adminDashboardHeaders']);
-dcCore::app()->addBehavior('adminDashboardContents', ['dmLastSpamsBehaviors', 'adminDashboardContents']);
-
-dcCore::app()->addBehavior('adminAfterDashboardOptionsUpdate', ['dmLastSpamsBehaviors', 'adminAfterDashboardOptionsUpdate']);
-dcCore::app()->addBehavior('adminDashboardOptionsForm', ['dmLastSpamsBehaviors', 'adminDashboardOptionsForm']);
-
 # BEHAVIORS
 class dmLastSpamsBehaviors
 {
@@ -103,7 +96,7 @@ class dmLastSpamsBehaviors
         } else {
             $params['limit'] = 30; // As in first page of comments' list
         }
-        $params['comment_status'] = -2;
+        $params['comment_status'] = dcBlog::COMMENT_JUNK;
         if ($recents > 0) {
             $params['sql'] = ' AND comment_dt >= ' . dmLastSpamsBehaviors::composeSQLSince(dcCore::app(), $recents) . ' ';
         }
@@ -116,7 +109,7 @@ class dmLastSpamsBehaviors
                     $ret .= ($last_id != -1 && $rs->comment_id > $last_id ? ' dmls-new' : '');
                     $last_counter++;
                 }
-                if ($rs->comment_status == -2) {
+                if ($rs->comment_status == dcBlog::COMMENT_JUNK) {
                     $ret .= ' sts-junk';
                 }
                 $ret .= '" id="dmls' . $rs->comment_id . '">';
@@ -149,7 +142,7 @@ class dmLastSpamsBehaviors
                 $ret .= '</li>';
             }
             $ret .= '</ul>';
-            $ret .= '<p><a href="comments.php?status=-2">' . __('See all spams') . '</a></p>';
+            $ret .= '<p><a href="comments.php?status=' . dcBlog::COMMENT_JUNK . '">' . __('See all spams') . '</a></p>';
 
             return $ret;
         }
@@ -158,7 +151,7 @@ class dmLastSpamsBehaviors
                 ($recents > 0 ? ' ' . sprintf(__('since %d hour', 'since %d hours', $recents), $recents) : '') . '</p>';
     }
 
-    public static function adminDashboardContents($core, $contents)
+    public static function adminDashboardContents($contents)
     {
         // Add modules to the contents stack
         dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
@@ -180,7 +173,7 @@ class dmLastSpamsBehaviors
         }
     }
 
-    public static function adminAfterDashboardOptionsUpdate($userID)
+    public static function adminAfterDashboardOptionsUpdate()
     {
         // Get and store user's prefs for plugin options
         dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
@@ -200,7 +193,7 @@ class dmLastSpamsBehaviors
         }
     }
 
-    public static function adminDashboardOptionsForm($core)
+    public static function adminDashboardOptionsForm()
     {
         // Add fieldset for plugin options
         dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
@@ -247,3 +240,10 @@ class dmLastSpamsBehaviors
             '</div>';
     }
 }
+
+// Dashboard behaviours
+dcCore::app()->addBehavior('adminDashboardHeaders', [dmLastSpamsBehaviors::class, 'adminDashboardHeaders']);
+dcCore::app()->addBehavior('adminDashboardContentsV2', [dmLastSpamsBehaviors::class, 'adminDashboardContents']);
+
+dcCore::app()->addBehavior('adminAfterDashboardOptionsUpdate', [dmLastSpamsBehaviors::class, 'adminAfterDashboardOptionsUpdate']);
+dcCore::app()->addBehavior('adminDashboardOptionsFormV2', [dmLastSpamsBehaviors::class, 'adminDashboardOptionsForm']);
