@@ -17,7 +17,7 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 $new_version = dcCore::app()->plugins->moduleInfo('dmLastSpams', 'version');
 $old_version = dcCore::app()->getVersion('dmLastSpams');
 
-if (version_compare($old_version, $new_version, '>=')) {
+if (version_compare((string) $old_version, $new_version, '>=')) {
     return;
 }
 

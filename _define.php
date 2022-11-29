@@ -18,7 +18,7 @@ $this->registerModule(
     'Last Spams Dashboard Module',
     'Display last spams on dashboard',
     'Franck Paul',
-    '0.5',
+    '1.0',
     [
         'requires'    => [['core', '2.24']],
         'permissions' => dcCore::app()->auth->makePermissions([
