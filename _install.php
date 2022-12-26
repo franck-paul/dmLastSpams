@@ -14,16 +14,11 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
 
-$new_version = dcCore::app()->plugins->moduleInfo('dmLastSpams', 'version');
-$old_version = dcCore::app()->getVersion('dmLastSpams');
-
-if (version_compare((string) $old_version, $new_version, '>=')) {
+if (!dcCore::app()->newVersion(basename(__DIR__), dcCore::app()->plugins->moduleInfo(basename(__DIR__), 'version'))) {
     return;
 }
 
 try {
-    dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
-
     // Default prefs for last spams
     dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams', false, 'boolean', 'Display last spams', false, true);
     dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams_nb', 5, 'integer', 'Number of last spams displayed', false, true);
@@ -34,8 +29,6 @@ try {
     dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams_recents', 0, 'integer', 'Max age of spams (in hours)', false, true);
     dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams_autorefresh', false, 'boolean', 'Auto refresh', false, true);
     dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams_badge', true, 'boolean', 'Display counter (Auto refresh only)', false, true);
-
-    dcCore::app()->setVersion('dmLastSpams', $new_version);
 
     return true;
 } catch (Exception $e) {
