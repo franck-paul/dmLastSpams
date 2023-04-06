@@ -16,8 +16,10 @@ l10n::$locales['%Y-%m-%d'] = '';
 l10n::$locales['%H:%M'] = '';
 l10n::$locales['See all spams'] = '';
 l10n::$locales['No spams'] = '';
-l10n::$locales['since %d hour'][0] = '';
-l10n::$locales['since %d hour'][1] = '';
+l10n::$locales['since %d hour'] = [
+	'',
+	'',
+];
 l10n::$locales['Last spams'] = '';
 l10n::$locales['Last spams on dashboard'] = '';
 l10n::$locales['Display last spams'] = '';

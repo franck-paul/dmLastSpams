@@ -37,8 +37,6 @@ class dmLastSpamsBehaviors
             $last_spam_id = -1;
         }
 
-        dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
-
         return
         dcPage::jsJson('dm_lastspams', [
             'dmLastSpams_LastSpamId'  => $last_spam_id,
@@ -56,13 +54,13 @@ class dmLastSpamsBehaviors
         switch (dcCore::app()->con->syntax()) {
             case 'sqlite':
                 $ret = 'datetime(\'' .
-                    dcCore::app()->con->db_escape_string('now') . '\', \'' .
-                    dcCore::app()->con->db_escape_string('-' . sprintf($nb) . ' ' . $unit) .
+                    dcCore::app()->con->escape('now') . '\', \'' .
+                    dcCore::app()->con->escape('-' . sprintf($nb) . ' ' . $unit) .
                     '\')';
 
                 break;
             case 'postgresql':
-                $ret = '(NOW() - \'' . dcCore::app()->con->db_escape_string(sprintf($nb) . ' ' . $unit) . '\'::INTERVAL)';
+                $ret = '(NOW() - \'' . dcCore::app()->con->escape(sprintf($nb) . ' ' . $unit) . '\'::INTERVAL)';
 
                 break;
             case 'mysql':
@@ -114,26 +112,27 @@ class dmLastSpamsBehaviors
                 }
                 $ret .= '" id="dmls' . $rs->comment_id . '">';
                 $ret .= '<a href="comment.php?id=' . $rs->comment_id . '">' . $rs->post_title . '</a>';
+                $dt   = '<time datetime="' . dt::iso8601(strtotime($rs->comment_dt), dcCore::app()->auth->getInfo('user_tz')) . '">%s</time>';
                 $info = [];
                 if ($large) {
                     if ($author) {
                         $info[] = __('by') . ' ' . $rs->comment_author;
                     }
                     if ($date) {
-                        $info[] = __('on') . ' ' . dt::dt2str(dcCore::app()->blog->settings->system->date_format, $rs->comment_dt);
+                        $info[] = sprintf($dt, __('on') . ' ' . dt::dt2str(dcCore::app()->blog->settings->system->date_format, $rs->comment_dt));
                     }
                     if ($time) {
-                        $info[] = __('at') . ' ' . dt::dt2str(dcCore::app()->blog->settings->system->time_format, $rs->comment_dt);
+                        $info[] = sprintf($dt, __('at') . ' ' . dt::dt2str(dcCore::app()->blog->settings->system->time_format, $rs->comment_dt));
                     }
                 } else {
                     if ($author) {
                         $info[] = $rs->comment_author;
                     }
                     if ($date) {
-                        $info[] = dt::dt2str(__('%Y-%m-%d'), $rs->comment_dt);
+                        $info[] = sprintf($dt, dt::dt2str(__('%Y-%m-%d'), $rs->comment_dt));
                     }
                     if ($time) {
-                        $info[] = dt::dt2str(__('%H:%M'), $rs->comment_dt);
+                        $info[] = sprintf($dt, dt::dt2str(__('%H:%M'), $rs->comment_dt));
                     }
                 }
                 if (count($info)) {
@@ -154,7 +153,6 @@ class dmLastSpamsBehaviors
     public static function adminDashboardContents($contents)
     {
         // Add modules to the contents stack
-        dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
         if (dcCore::app()->auth->user_prefs->dmlastspams->last_spams) {
             $class = (dcCore::app()->auth->user_prefs->dmlastspams->last_spams_large ? 'medium' : 'small');
             $ret   = '<div id="last-spams" class="box ' . $class . '">' .
@@ -176,8 +174,6 @@ class dmLastSpamsBehaviors
     public static function adminAfterDashboardOptionsUpdate()
     {
         // Get and store user's prefs for plugin options
-        dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
-
         try {
             dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams', !empty($_POST['dmlast_spams']), 'boolean');
             dcCore::app()->auth->user_prefs->dmlastspams->put('last_spams_nb', (int) $_POST['dmlast_spams_nb'], 'integer');
@@ -196,7 +192,6 @@ class dmLastSpamsBehaviors
     public static function adminDashboardOptionsForm()
     {
         // Add fieldset for plugin options
-        dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
 
         echo '<div class="fieldset" id="dmlastspams"><h4>' . __('Last spams on dashboard') . '</h4>' .
 
@@ -241,9 +236,11 @@ class dmLastSpamsBehaviors
     }
 }
 
-// Dashboard behaviours
-dcCore::app()->addBehavior('adminDashboardHeaders', [dmLastSpamsBehaviors::class, 'adminDashboardHeaders']);
-dcCore::app()->addBehavior('adminDashboardContentsV2', [dmLastSpamsBehaviors::class, 'adminDashboardContents']);
+dcCore::app()->addBehaviors([
+    // Dashboard behaviours
+    'adminDashboardHeaders'    => [dmLastSpamsBehaviors::class, 'adminDashboardHeaders'],
+    'adminDashboardContentsV2' => [dmLastSpamsBehaviors::class, 'adminDashboardContents'],
 
-dcCore::app()->addBehavior('adminAfterDashboardOptionsUpdate', [dmLastSpamsBehaviors::class, 'adminAfterDashboardOptionsUpdate']);
-dcCore::app()->addBehavior('adminDashboardOptionsFormV2', [dmLastSpamsBehaviors::class, 'adminDashboardOptionsForm']);
+    'adminAfterDashboardOptionsUpdate' => [dmLastSpamsBehaviors::class, 'adminAfterDashboardOptionsUpdate'],
+    'adminDashboardOptionsFormV2'      => [dmLastSpamsBehaviors::class, 'adminDashboardOptionsForm'],
+]);

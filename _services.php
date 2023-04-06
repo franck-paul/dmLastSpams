@@ -47,7 +47,6 @@ class dmLastSpamsRest
             'sql'            => 'AND comment_id > ' . $last_id, // only new ones
             'comment_status' => dcBlog::COMMENT_JUNK,
         ];
-        dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
 
         $rs    = dcCore::app()->blog->getComments($sqlp);
         $count = $rs->count();
@@ -89,7 +88,6 @@ class dmLastSpamsRest
             return $payload;
         }
 
-        dcCore::app()->auth->user_prefs->addWorkspace('dmlastspams');
         $list = dmLastSpamsBehaviors::getLastSpams(
             dcCore::app(),
             dcCore::app()->auth->user_prefs->dmlastspams->last_spams_nb,

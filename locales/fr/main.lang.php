@@ -16,8 +16,10 @@ l10n::$locales['%Y-%m-%d'] = '%d/%m/%Y';
 l10n::$locales['%H:%M'] = '%H:%M';
 l10n::$locales['See all spams'] = 'Voir tous les indésirables';
 l10n::$locales['No spams'] = 'Pas d\'indésirables';
-l10n::$locales['since %d hour'][0] = 'depuis %d heure';
-l10n::$locales['since %d hour'][1] = 'depuis %d heures';
+l10n::$locales['since %d hour'] = [
+	'depuis %d heure',
+	'depuis %d heures',
+];
 l10n::$locales['Last spams'] = 'Derniers indésirables';
 l10n::$locales['Last spams on dashboard'] = 'Derniers indésirables sur le tableau de bord';
 l10n::$locales['Display last spams'] = 'Affiche les derniers indésirables';
