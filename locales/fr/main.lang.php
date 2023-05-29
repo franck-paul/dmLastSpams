@@ -11,7 +11,7 @@
 
 use Dotclear\Helper\L10n;
 
-L10n::$locales['Display last spams on dashboard'] = 'Affiche les derniers indésirables sur le tableau de bord';
+L10n::$locales['Display last spams on dashboard'] = 'Afficher les derniers indésirables sur le tableau de bord';
 L10n::$locales['Last Spams Dashboard Module'] = 'Module d\'affichage des derniers indésirables';
 L10n::$locales['at'] = 'à';
 L10n::$locales['%Y-%m-%d'] = '%d/%m/%Y';
@@ -21,11 +21,12 @@ L10n::$locales['No spams'] = 'Pas d\'indésirables';
 L10n::$locales['since %d hour'] = [
 	'depuis %d heure',
 	'depuis %d heures',
+	'depuis %d heures',
 ];
 L10n::$locales['Last spams'] = 'Derniers indésirables';
 L10n::$locales['Last spams on dashboard'] = 'Derniers indésirables sur le tableau de bord';
 L10n::$locales['Display last spams'] = 'Affiche les derniers indésirables';
-L10n::$locales['Number of last spams to display:'] = 'Nombre de indésirables à afficher :';
+L10n::$locales['Number of last spams to display:'] = 'Nombre d\'indésirables à afficher :';
 L10n::$locales['Show authors'] = 'Afficher les auteurs';
 L10n::$locales['Show dates'] = 'Afficher les dates';
 L10n::$locales['Show times'] = 'Afficher les heures';

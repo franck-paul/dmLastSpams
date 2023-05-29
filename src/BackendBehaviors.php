@@ -245,7 +245,7 @@ class BackendBehaviors
                 (new Text(null, __('Leave empty to ignore age of spams'))),
             ]),
             (new Para())->items([
-                (new Checkbox('dmlast_spams_small', $preferences->large))
+                (new Checkbox('dmlast_spams_small', !$preferences->large))
                     ->value(1)
                     ->label((new Label(__('Small screen'), Label::INSIDE_TEXT_AFTER))),
             ]),
