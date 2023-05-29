@@ -10,11 +10,14 @@
  * @copyright Franck Paul carnet.franck.paul@gmail.com
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_CONTEXT_ADMIN')) {
-    return;
-}
+declare(strict_types=1);
 
-class dmLastSpamsRest
+namespace Dotclear\Plugin\dmLastSpams;
+
+use dcBlog;
+use dcCore;
+
+class BackendRest
 {
     /**
      * Gets the spams count.
@@ -88,14 +91,14 @@ class dmLastSpamsRest
             return $payload;
         }
 
-        $list = dmLastSpamsBehaviors::getLastSpams(
+        $list = BackendBehaviors::getLastSpams(
             dcCore::app(),
-            dcCore::app()->auth->user_prefs->dmlastspams->last_spams_nb,
-            dcCore::app()->auth->user_prefs->dmlastspams->last_spams_large,
-            dcCore::app()->auth->user_prefs->dmlastspams->last_spams_author,
-            dcCore::app()->auth->user_prefs->dmlastspams->last_spams_date,
-            dcCore::app()->auth->user_prefs->dmlastspams->last_spams_time,
-            dcCore::app()->auth->user_prefs->dmlastspams->last_spams_recents,
+            dcCore::app()->auth->user_prefs->dmlastspams->nb,
+            dcCore::app()->auth->user_prefs->dmlastspams->large,
+            dcCore::app()->auth->user_prefs->dmlastspams->author,
+            dcCore::app()->auth->user_prefs->dmlastspams->date,
+            dcCore::app()->auth->user_prefs->dmlastspams->time,
+            dcCore::app()->auth->user_prefs->dmlastspams->recents,
             $stored_id,
             $counter
         );

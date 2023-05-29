@@ -9,26 +9,28 @@
 # DOT NOT MODIFY THIS FILE !
 #
 
-l10n::$locales['Display last spams on dashboard'] = '';
-l10n::$locales['Last Spams Dashboard Module'] = '';
-l10n::$locales['at'] = '';
-l10n::$locales['%Y-%m-%d'] = '';
-l10n::$locales['%H:%M'] = '';
-l10n::$locales['See all spams'] = '';
-l10n::$locales['No spams'] = '';
-l10n::$locales['since %d hour'] = [
+use Dotclear\Helper\L10n;
+
+L10n::$locales['Display last spams on dashboard'] = '';
+L10n::$locales['Last Spams Dashboard Module'] = '';
+L10n::$locales['at'] = '';
+L10n::$locales['%Y-%m-%d'] = '';
+L10n::$locales['%H:%M'] = '';
+L10n::$locales['See all spams'] = '';
+L10n::$locales['No spams'] = '';
+L10n::$locales['since %d hour'] = [
 	'',
 	'',
 ];
-l10n::$locales['Last spams'] = '';
-l10n::$locales['Last spams on dashboard'] = '';
-l10n::$locales['Display last spams'] = '';
-l10n::$locales['Number of last spams to display:'] = '';
-l10n::$locales['Show authors'] = '';
-l10n::$locales['Show dates'] = '';
-l10n::$locales['Show times'] = '';
-l10n::$locales['Max age of spams to display (in hours):'] = '';
-l10n::$locales['Leave empty to ignore age of spams'] = '';
-l10n::$locales['Small screen'] = '';
-l10n::$locales['Auto refresh'] = '';
-l10n::$locales['Display badges (only if Auto refresh is enabled)'] = '';
+L10n::$locales['Last spams'] = '';
+L10n::$locales['Last spams on dashboard'] = '';
+L10n::$locales['Display last spams'] = '';
+L10n::$locales['Number of last spams to display:'] = '';
+L10n::$locales['Show authors'] = '';
+L10n::$locales['Show dates'] = '';
+L10n::$locales['Show times'] = '';
+L10n::$locales['Max age of spams to display (in hours):'] = '';
+L10n::$locales['Leave empty to ignore age of spams'] = '';
+L10n::$locales['Small screen'] = '';
+L10n::$locales['Auto refresh'] = '';
+L10n::$locales['Display badges (only if Auto refresh is enabled)'] = '';
