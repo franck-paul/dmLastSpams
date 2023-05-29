@@ -1,19 +1,27 @@
+# SOME DESCRIPTIVE TITLE.
+# This file is put in the public domain.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+# Translators:
+# Franck Paul <carnet.franck.paul@gmail.com>, 2023
+# 
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Dotclear 2 dmLastSpams module\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-29 12:45+0200\n"
-"PO-Revision-Date: \n"
-"Last-Translator: Franck Paul <carnet.franck.paul@gmail.com>\n"
-"Language-Team: \n"
-"Language: fr\n"
+"PO-Revision-Date: 2023-05-29 10:48+0000\n"
+"Last-Translator: Franck Paul <carnet.franck.paul@gmail.com>, 2023\n"
+"Language-Team: French (https://app.transifex.com/open-time/teams/109573/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=3; plural=(n == 0 || n == 1) ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 
 msgid "Display last spams on dashboard"
-msgstr "Affiche les derniers indésirables sur le tableau de bord"
+msgstr "Afficher les derniers indésirables sur le tableau de bord"
 
 msgid "Last Spams Dashboard Module"
 msgstr "Module d'affichage des derniers indésirables"
@@ -38,6 +46,7 @@ msgid "since %d hour"
 msgid_plural "since %d hours"
 msgstr[0] "depuis %d heure"
 msgstr[1] "depuis %d heures"
+msgstr[2] "depuis %d heures"
 
 msgid "Last spams"
 msgstr "Derniers indésirables"
@@ -49,7 +58,7 @@ msgid "Display last spams"
 msgstr "Affiche les derniers indésirables"
 
 msgid "Number of last spams to display:"
-msgstr "Nombre de indésirables à afficher :"
+msgstr "Nombre d'indésirables à afficher :"
 
 msgid "Show authors"
 msgstr "Afficher les auteurs"
@@ -73,4 +82,6 @@ msgid "Auto refresh"
 msgstr "Rafraichissement automatique"
 
 msgid "Display badges (only if Auto refresh is enabled)"
-msgstr "Afficher les compteurs (seulement si le Rafraichissement automatique est activé)"
+msgstr ""
+"Afficher les compteurs (seulement si le Rafraichissement automatique est "
+"activé)"
