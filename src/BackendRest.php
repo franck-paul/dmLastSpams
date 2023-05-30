@@ -91,14 +91,15 @@ class BackendRest
             return $payload;
         }
 
-        $list = BackendBehaviors::getLastSpams(
+        $preferences = dcCore::app()->auth->user_prefs->get(My::id());
+        $list        = BackendBehaviors::getLastSpams(
             dcCore::app(),
-            dcCore::app()->auth->user_prefs->dmlastspams->nb,
-            dcCore::app()->auth->user_prefs->dmlastspams->large,
-            dcCore::app()->auth->user_prefs->dmlastspams->author,
-            dcCore::app()->auth->user_prefs->dmlastspams->date,
-            dcCore::app()->auth->user_prefs->dmlastspams->time,
-            dcCore::app()->auth->user_prefs->dmlastspams->recents,
+            $preferences->nb,
+            $preferences->large,
+            $preferences->author,
+            $preferences->date,
+            $preferences->time,
+            $preferences->recents,
             $stored_id,
             $counter
         );
