@@ -1,7 +1,7 @@
 /*global $, dotclear */
 'use strict';
 
-dotclear.dmLastSpamsCount = () => {
+dotclear.dmLastSpamsCount = (icon) => {
   dotclear.services(
     'dmLastSpamsCount',
     (data) => {
@@ -11,7 +11,7 @@ dotclear.dmLastSpamsCount = () => {
           if (response?.payload.ret) {
             const nb_spams = response.payload.nb;
             if (nb_spams !== undefined && nb_spams != dotclear.dmLastSpams_SpamCount) {
-              dotclear.badge($('#dashboard-main #icons p a[href="comments.php"]'), {
+              dotclear.badge(icon, {
                 id: 'dmls',
                 remove: nb_spams == 0,
                 value: nb_spams,
@@ -184,12 +184,15 @@ $(() => {
 
     if (dotclear.dmLastSpams_Badge) {
       $('#last-spams').addClass('badgeable');
-      const icon_com = $('#dashboard-main #icons p a[href="comments.php"]');
+      let icon_com = $('#dashboard-main #icons p a[href="comments.php"]');
+      if (!icon_com.length) {
+        icon_com = $('#dashboard-main #icons p #icon-process-comments-fav');
+      }
       if (icon_com.length) {
         // First pass
-        dotclear.dmLastSpamsCount();
+        dotclear.dmLastSpamsCount(icon_com);
         // Then fired every 30 seconds
-        dotclear.dmLastSpams_TimerSpam = setInterval(dotclear.dmLastSpamsCount, 30 * 1000);
+        dotclear.dmLastSpams_TimerSpam = setInterval(dotclear.dmLastSpamsCount, 30 * 1000, icon_com);
       }
     }
   }
