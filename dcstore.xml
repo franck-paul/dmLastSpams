@@ -1,10 +1,10 @@
 <modules xmlns:da="http://dotaddict.org/da/">
   <module id="dmLastSpams">
     <name>Last Spams Dashboard Module</name>
-    <version>2.1.1</version>
+    <version>2.2</version>
     <author>Franck Paul</author>
     <desc>Display last spams on dashboard</desc>
-    <file>https://github.com/franck-paul/dmLastSpams/releases/download/2.1.1/plugin-dmLastSpams-2.1.1.zip</file>
+    <file>https://github.com/franck-paul/dmLastSpams/releases/download/2.2/plugin-dmLastSpams-2.2.zip</file>
     <da:dcmin>2.26</da:dcmin>
     <da:details>https://open-time.net/?q=dmlastspams</da:details>
     <da:support>https://github.com/franck-paul/dmlastspams</da:support>
