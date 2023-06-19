@@ -123,7 +123,7 @@ class BackendBehaviors
                     $ret .= ' sts-junk';
                 }
                 $ret .= '" id="dmls' . $rs->comment_id . '">';
-                $ret .= '<a href="comment.php?id=' . $rs->comment_id . '">' . $rs->post_title . '</a>';
+                $ret .= '<a href="' . dcCore::app()->adminurl->get('admin.comment', ['id' => $rs->comment_id]) . '">' . $rs->post_title . '</a>';
                 $dt   = '<time datetime="' . Date::iso8601(strtotime($rs->comment_dt), dcCore::app()->auth->getInfo('user_tz')) . '">%s</time>';
                 $info = [];
                 if ($large) {
@@ -153,7 +153,7 @@ class BackendBehaviors
                 $ret .= '</li>';
             }
             $ret .= '</ul>';
-            $ret .= '<p><a href="comments.php?status=' . dcBlog::COMMENT_JUNK . '">' . __('See all spams') . '</a></p>';
+            $ret .= '<p><a href="' . dcCore::app()->adminurl->get('admin.comments', ['status' => dcBlog::COMMENT_JUNK]) . '">' . __('See all spams') . '</a></p>';
 
             return $ret;
         }
