@@ -169,7 +169,10 @@ class BackendBehaviors
         if ($preferences->active) {
             $class = ($preferences->large ? 'medium' : 'small');
             $ret   = '<div id="last-spams" class="box ' . $class . '">' .
-            '<h3>' . '<img src="' . urldecode(dcPage::getPF('dmLastSpams/icon.png')) . '" alt="" />' . ' ' . __('Last spams') . '</h3>';
+            '<h3>' .
+            '<img src="' . urldecode(dcPage::getPF('dmLastSpams/icon.svg')) . '" alt="" class="light-only icon-small" />' .
+            '<img src="' . urldecode(dcPage::getPF('dmLastSpams/icon-dark.svg')) . '" alt="" class="dark-only icon-small" />' .
+            ' ' . __('Last spams') . '</h3>';
             $ret .= BackendBehaviors::getLastSpams(
                 dcCore::app(),
                 $preferences->nb,
