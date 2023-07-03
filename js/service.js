@@ -176,28 +176,30 @@ $(() => {
     callback: dotclear.dmLastSpamsView,
   });
   $('#last-spams ul').addClass('expandable');
-  if (dotclear.dmLastSpams_AutoRefresh) {
-    // First pass
-    dotclear.dmLastSpamsCheck();
-    // Auto refresh requested : Set interval between two checks for new comments and spam counter check
-    dotclear.dmLastSpams_Timer = setInterval(dotclear.dmLastSpamsCheck, (dotclear.dmLastSpams_Interval || 30) * 1000);
+  if (!dotclear.dmLastSpams_AutoRefresh) {
+    return;
+  }
+  // First pass
+  dotclear.dmLastSpamsCheck();
+  // Auto refresh requested : Set interval between two checks for new comments and spam counter check
+  dotclear.dmLastSpams_Timer = setInterval(dotclear.dmLastSpamsCheck, (dotclear.dmLastSpams_Interval || 30) * 1000);
 
-    if (dotclear.dmLastSpams_Badge) {
-      $('#last-spams').addClass('badgeable');
-      let icon_com = $('#dashboard-main #icons p a[href="comments.php"]');
-      if (!icon_com.length) {
-        icon_com = $('#dashboard-main #icons p #icon-process-comments-fav');
-      }
-      if (icon_com.length) {
-        // First pass
-        dotclear.dmLastSpamsCount(icon_com);
-        // Then fired every X seconds
-        dotclear.dmLastSpams_TimerSpam = setInterval(
-          dotclear.dmLastSpamsCount,
-          (dotclear.dmLastSpams_Interval || 30) * 1000,
-          icon_com,
-        );
-      }
-    }
+  if (!dotclear.dmLastSpams_Badge) {
+    return;
+  }
+  $('#last-spams').addClass('badgeable');
+  let icon_com = $('#dashboard-main #icons p a[href="comments.php"]');
+  if (!icon_com.length) {
+    icon_com = $('#dashboard-main #icons p #icon-process-comments-fav');
+  }
+  if (icon_com.length) {
+    // First pass
+    dotclear.dmLastSpamsCount(icon_com);
+    // Then fired every X seconds
+    dotclear.dmLastSpams_TimerSpam = setInterval(
+      dotclear.dmLastSpamsCount,
+      (dotclear.dmLastSpams_Interval || 30) * 1000,
+      icon_com,
+    );
   }
 });
