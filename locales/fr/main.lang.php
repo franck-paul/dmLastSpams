@@ -34,4 +34,5 @@ L10n::$locales['Max age of spams to display (in hours):'] = 'Âge maximum des in
 L10n::$locales['Leave empty to ignore age of spams'] = 'Laisser vide pour ignorer l\'âge des indésirables';
 L10n::$locales['Small screen'] = 'Affichage abrégé';
 L10n::$locales['Auto refresh'] = 'Rafraichissement automatique';
+L10n::$locales['Interval in seconds between two refreshes:'] = 'Intervalle en secondes entre deux rafraichissements :';
 L10n::$locales['Display badges (only if Auto refresh is enabled)'] = 'Afficher les compteurs (seulement si le Rafraichissement automatique est activé)';

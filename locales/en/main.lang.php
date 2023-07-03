@@ -33,4 +33,5 @@ L10n::$locales['Max age of spams to display (in hours):'] = '';
 L10n::$locales['Leave empty to ignore age of spams'] = '';
 L10n::$locales['Small screen'] = '';
 L10n::$locales['Auto refresh'] = '';
+L10n::$locales['Interval in seconds between two refreshes:'] = '';
 L10n::$locales['Display badges (only if Auto refresh is enabled)'] = '';
