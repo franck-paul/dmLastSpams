@@ -56,6 +56,7 @@ class BackendBehaviors
             'dmLastSpams_Badge'       => $preferences->badge,
             'dmLastSpams_LastCounter' => 0,
             'dmLastSpams_SpamCount'   => -1,
+            'dmLastSpams_Interval'    => ($preferences->interval ?? 30),
         ]) .
         dcPage::jsModuleLoad('dmLastSpams/js/service.js', dcCore::app()->getVersion('dmLastSpams')) .
         dcPage::cssModuleLoad('dmLastSpams/css/style.css', 'screen', dcCore::app()->getVersion('dmLastSpams'));
@@ -200,6 +201,7 @@ class BackendBehaviors
             $preferences->put('time', !empty($_POST['dmlast_spams_time']), dcWorkspace::WS_BOOL);
             $preferences->put('recents', (int) $_POST['dmlast_spams_recents'], dcWorkspace::WS_INT);
             $preferences->put('autorefresh', !empty($_POST['dmlast_spams_autorefresh']), dcWorkspace::WS_BOOL);
+            $preferences->put('interval', (int) $_POST['dmlast_spams_interval'], dcWorkspace::WS_INT);
             $preferences->put('badge', !empty($_POST['dmlast_spams_badge']), dcWorkspace::WS_BOOL);
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
@@ -256,6 +258,10 @@ class BackendBehaviors
                 (new Checkbox('dmlast_spams_autorefresh', $preferences->autorefresh))
                     ->value(1)
                     ->label((new Label(__('Auto refresh'), Label::INSIDE_TEXT_AFTER))),
+            ]),
+            (new Para())->items([
+                (new Number('dmlast_spams_interval', 0, 9_999_999, $preferences->interval))
+                    ->label((new Label(__('Interval in seconds between two refreshes:'), Label::INSIDE_TEXT_BEFORE))),
             ]),
             (new Para())->items([
                 (new Checkbox('dmlast_spams_badge', $preferences->badge))

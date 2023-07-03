@@ -179,8 +179,8 @@ $(() => {
   if (dotclear.dmLastSpams_AutoRefresh) {
     // First pass
     dotclear.dmLastSpamsCheck();
-    // Auto refresh requested : Set 30 seconds interval between two checks for new comments and spam counter check
-    dotclear.dmLastSpams_Timer = setInterval(dotclear.dmLastSpamsCheck, 30 * 1000);
+    // Auto refresh requested : Set interval between two checks for new comments and spam counter check
+    dotclear.dmLastSpams_Timer = setInterval(dotclear.dmLastSpamsCheck, (dotclear.dmLastSpams_Interval || 30) * 1000);
 
     if (dotclear.dmLastSpams_Badge) {
       $('#last-spams').addClass('badgeable');
@@ -191,8 +191,12 @@ $(() => {
       if (icon_com.length) {
         // First pass
         dotclear.dmLastSpamsCount(icon_com);
-        // Then fired every 30 seconds
-        dotclear.dmLastSpams_TimerSpam = setInterval(dotclear.dmLastSpamsCount, 30 * 1000, icon_com);
+        // Then fired every X seconds
+        dotclear.dmLastSpams_TimerSpam = setInterval(
+          dotclear.dmLastSpamsCount,
+          (dotclear.dmLastSpams_Interval || 30) * 1000,
+          icon_com,
+        );
       }
     }
   }

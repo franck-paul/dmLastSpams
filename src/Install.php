@@ -68,6 +68,7 @@ class Install extends dcNsProcess
             $preferences->put('time', true, dcWorkspace::WS_BOOL, 'Show times', false, true);
             $preferences->put('recents', 0, dcWorkspace::WS_INT, 'Max age of spams (in hours)', false, true);
             $preferences->put('autorefresh', false, dcWorkspace::WS_BOOL, 'Auto refresh', false, true);
+            $preferences->put('interval', 30, dcWorkspace::WS_INT, 'Interval between two refreshes', false, true);
             $preferences->put('badge', true, dcWorkspace::WS_BOOL, 'Display counter (Auto refresh only)', false, true);
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
