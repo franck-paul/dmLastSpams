@@ -45,7 +45,7 @@ dotclear.dmLastSpamsRows = (last_id) => {
         const response = JSON.parse(data);
         if (response?.success) {
           if (response?.payload.ret) {
-            const counter = response.payload.counter;
+            const { counter } = response.payload;
             // Replace current list with the new one
             if ($('#last-spams ul').length) {
               $('#last-spams ul').remove();
@@ -87,7 +87,7 @@ dotclear.dmLastSpamsRows = (last_id) => {
     {
       json: 1,
       stored_id: dotclear.dmLastSpams_LastSpamId,
-      last_id: last_id,
+      last_id,
       last_counter: dotclear.dmLastSpams_LastCounter,
     },
   );

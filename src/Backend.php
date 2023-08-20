@@ -15,39 +15,36 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\dmLastSpams;
 
 use dcCore;
-use dcNsProcess;
+use Dotclear\Core\Process;
 
-class Backend extends dcNsProcess
+class Backend extends Process
 {
-    protected static $init = false; /** @deprecated since 2.27 */
     public static function init(): bool
     {
-        static::$init = My::checkContext(My::BACKEND);
-
         // dead but useful code, in order to have translations
         __('Last Spams Dashboard Module') . __('Display last spams on dashboard');
 
-        return static::$init;
+        return self::status(My::checkContext(My::BACKEND));
     }
 
     public static function process(): bool
     {
-        if (!static::$init) {
+        if (!self::status()) {
             return false;
         }
 
         dcCore::app()->addBehaviors([
             // Dashboard behaviours
-            'adminDashboardHeaders'    => [BackendBehaviors::class, 'adminDashboardHeaders'],
-            'adminDashboardContentsV2' => [BackendBehaviors::class, 'adminDashboardContents'],
+            'adminDashboardHeaders'    => BackendBehaviors::adminDashboardHeaders(...),
+            'adminDashboardContentsV2' => BackendBehaviors::adminDashboardContents(...),
 
-            'adminAfterDashboardOptionsUpdate' => [BackendBehaviors::class, 'adminAfterDashboardOptionsUpdate'],
-            'adminDashboardOptionsFormV2'      => [BackendBehaviors::class, 'adminDashboardOptionsForm'],
+            'adminAfterDashboardOptionsUpdate' => BackendBehaviors::adminAfterDashboardOptionsUpdate(...),
+            'adminDashboardOptionsFormV2'      => BackendBehaviors::adminDashboardOptionsForm(...),
         ]);
 
-        dcCore::app()->rest->addFunction('dmLastSpamsCheck', [BackendRest::class, 'checkNewSpams']);
-        dcCore::app()->rest->addFunction('dmLastSpamsRows', [BackendRest::class, 'getLastSpamsRows']);
-        dcCore::app()->rest->addFunction('dmLastSpamsCount', [BackendRest::class, 'getSpamsCount']);
+        dcCore::app()->rest->addFunction('dmLastSpamsCheck', BackendRest::checkNewSpams(...));
+        dcCore::app()->rest->addFunction('dmLastSpamsRows', BackendRest::getLastSpamsRows(...));
+        dcCore::app()->rest->addFunction('dmLastSpamsCount', BackendRest::getSpamsCount(...));
 
         return true;
     }

@@ -17,8 +17,8 @@ namespace Dotclear\Plugin\dmLastSpams;
 use ArrayObject;
 use dcBlog;
 use dcCore;
-use dcPage;
 use dcWorkspace;
+use Dotclear\Core\Backend\Page;
 use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Form\Checkbox;
 use Dotclear\Helper\Html\Form\Fieldset;
@@ -50,7 +50,7 @@ class BackendBehaviors
         }
 
         return
-        dcPage::jsJson('dm_lastspams', [
+        Page::jsJson('dm_lastspams', [
             'dmLastSpams_LastSpamId'  => $last_spam_id,
             'dmLastSpams_AutoRefresh' => $preferences->autorefresh,
             'dmLastSpams_Badge'       => $preferences->badge,
@@ -58,8 +58,8 @@ class BackendBehaviors
             'dmLastSpams_SpamCount'   => -1,
             'dmLastSpams_Interval'    => ($preferences->interval ?? 30),
         ]) .
-        dcPage::jsModuleLoad('dmLastSpams/js/service.js', dcCore::app()->getVersion('dmLastSpams')) .
-        dcPage::cssModuleLoad('dmLastSpams/css/style.css', 'screen', dcCore::app()->getVersion('dmLastSpams'));
+        My::jsLoad('service.js') .
+        My::cssLoad('style.css');
     }
 
     private static function composeSQLSince($nb, $unit = 'HOUR')
@@ -124,7 +124,7 @@ class BackendBehaviors
                     $ret .= ' sts-junk';
                 }
                 $ret .= '" id="dmls' . $rs->comment_id . '">';
-                $ret .= '<a href="' . dcCore::app()->adminurl->get('admin.comment', ['id' => $rs->comment_id]) . '">' . $rs->post_title . '</a>';
+                $ret .= '<a href="' . dcCore::app()->admin->url->get('admin.comment', ['id' => $rs->comment_id]) . '">' . $rs->post_title . '</a>';
                 $dt   = '<time datetime="' . Date::iso8601(strtotime($rs->comment_dt), dcCore::app()->auth->getInfo('user_tz')) . '">%s</time>';
                 $info = [];
                 if ($large) {
@@ -154,7 +154,7 @@ class BackendBehaviors
                 $ret .= '</li>';
             }
             $ret .= '</ul>';
-            $ret .= '<p><a href="' . dcCore::app()->adminurl->get('admin.comments', ['status' => dcBlog::COMMENT_JUNK]) . '">' . __('See all spams') . '</a></p>';
+            $ret .= '<p><a href="' . dcCore::app()->admin->url->get('admin.comments', ['status' => dcBlog::COMMENT_JUNK]) . '">' . __('See all spams') . '</a></p>';
 
             return $ret;
         }
@@ -171,8 +171,8 @@ class BackendBehaviors
             $class = ($preferences->large ? 'medium' : 'small');
             $ret   = '<div id="last-spams" class="box ' . $class . '">' .
             '<h3>' .
-            '<img src="' . urldecode(dcPage::getPF('dmLastSpams/icon.svg')) . '" alt="" class="light-only icon-small" />' .
-            '<img src="' . urldecode(dcPage::getPF('dmLastSpams/icon-dark.svg')) . '" alt="" class="dark-only icon-small" />' .
+            '<img src="' . urldecode(Page::getPF('dmLastSpams/icon.svg')) . '" alt="" class="light-only icon-small" />' .
+            '<img src="' . urldecode(Page::getPF('dmLastSpams/icon-dark.svg')) . '" alt="" class="dark-only icon-small" />' .
             ' ' . __('Last spams') . '</h3>';
             $ret .= BackendBehaviors::getLastSpams(
                 dcCore::app(),
