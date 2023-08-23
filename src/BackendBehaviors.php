@@ -33,7 +33,7 @@ class BackendBehaviors
 {
     public static function adminDashboardHeaders()
     {
-        $preferences = dcCore::app()->auth->user_prefs->get(My::id());
+        $preferences = My::prefs();
         $sqlp        = [
             'limit'      => 1,                 // only the last one
             'no_content' => true,              // content is not required
@@ -166,7 +166,7 @@ class BackendBehaviors
     public static function adminDashboardContents($contents)
     {
         // Add modules to the contents stack
-        $preferences = dcCore::app()->auth->user_prefs->get(My::id());
+        $preferences = My::prefs();
         if ($preferences->active) {
             $class = ($preferences->large ? 'medium' : 'small');
             $ret   = '<div id="last-spams" class="box ' . $class . '">' .
@@ -192,7 +192,7 @@ class BackendBehaviors
     {
         // Get and store user's prefs for plugin options
         try {
-            $preferences = dcCore::app()->auth->user_prefs->get(My::id());
+            $preferences = My::prefs();
             $preferences->put('active', !empty($_POST['dmlast_spams']), dcWorkspace::WS_BOOL);
             $preferences->put('nb', (int) $_POST['dmlast_spams_nb'], dcWorkspace::WS_INT);
             $preferences->put('large', empty($_POST['dmlast_spams_small']), dcWorkspace::WS_BOOL);
@@ -210,7 +210,7 @@ class BackendBehaviors
 
     public static function adminDashboardOptionsForm()
     {
-        $preferences = dcCore::app()->auth->user_prefs->get(My::id());
+        $preferences = My::prefs();
 
         // Add fieldset for plugin options
 

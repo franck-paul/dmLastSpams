@@ -91,7 +91,7 @@ class BackendRest
             return $payload;
         }
 
-        $preferences = dcCore::app()->auth->user_prefs->get(My::id());
+        $preferences = My::prefs();
         $list        = BackendBehaviors::getLastSpams(
             dcCore::app(),
             $preferences->nb,
