@@ -22,7 +22,7 @@ class BackendRest
     /**
      * Gets the spams count.
      *
-     * @return     array   The payload.
+     * @return     array<string, mixed>   The payload.
      */
     public static function getSpamsCount(): array
     {
@@ -35,9 +35,9 @@ class BackendRest
     /**
      * Serve method to check new spams for current blog.
      *
-     * @param      array   $get    The get
+     * @param      array<string, string>   $get    The get
      *
-     * @return     array   The payload.
+     * @return     array<string, mixed>   The payload.
      */
     public static function checkNewSpams($get): array
     {
@@ -70,9 +70,9 @@ class BackendRest
     /**
      * Gets the last spams rows.
      *
-     * @param      array   $get    The get
+     * @param      array<string, string>   $get    The get
      *
-     * @return     array   The payload.
+     * @return     array<string, mixed>   The payload.
      */
     public static function getLastSpamsRows($get): array
     {
@@ -93,7 +93,6 @@ class BackendRest
 
         $preferences = My::prefs();
         $list        = BackendBehaviors::getLastSpams(
-            dcCore::app(),
             $preferences->nb,
             $preferences->large,
             $preferences->author,

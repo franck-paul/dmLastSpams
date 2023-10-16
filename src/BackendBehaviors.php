@@ -31,7 +31,7 @@ use Exception;
 
 class BackendBehaviors
 {
-    public static function adminDashboardHeaders()
+    public static function adminDashboardHeaders(): string
     {
         $preferences = My::prefs();
         $sqlp        = [
@@ -62,7 +62,7 @@ class BackendBehaviors
         My::cssLoad('style.css');
     }
 
-    private static function composeSQLSince($nb, $unit = 'HOUR')
+    private static function composeSQLSince(int $nb, string $unit = 'HOUR'): string
     {
         switch (dcCore::app()->con->syntax()) {
             case 'sqlite':
@@ -87,16 +87,15 @@ class BackendBehaviors
     }
 
     public static function getLastSpams(
-        $core,
-        $nb,
-        $large,
-        $author,
-        $date,
-        $time,
-        $recents = 0,
-        $last_id = -1,
-        &$last_counter = 0
-    ) {
+        int $nb,
+        bool $large,
+        string $author,
+        bool $date,
+        bool $time,
+        int $recents = 0,
+        int $last_id = -1,
+        int &$last_counter = 0
+    ): string {
         $recents = (int) $recents;
         $nb      = (int) $nb;
 
@@ -116,15 +115,15 @@ class BackendBehaviors
             $ret = '<ul>';
             while ($rs->fetch()) {
                 $ret .= '<li class="line';
-                if ($last_id != -1 && $rs->comment_id > $last_id) {
-                    $ret .= ($last_id != -1 && $rs->comment_id > $last_id ? ' dmls-new' : '');
+                if ($last_id !== -1 && $rs->comment_id > $last_id) {
+                    $ret .= ' dmls-new';
                     $last_counter++;
                 }
                 if ($rs->comment_status == dcBlog::COMMENT_JUNK) {
                     $ret .= ' sts-junk';
                 }
                 $ret .= '" id="dmls' . $rs->comment_id . '">';
-                $ret .= '<a href="' . dcCore::app()->admin->url->get('admin.comment', ['id' => $rs->comment_id]) . '">' . $rs->post_title . '</a>';
+                $ret .= '<a href="' . dcCore::app()->adminurl->get('admin.comment', ['id' => $rs->comment_id]) . '">' . $rs->post_title . '</a>';
                 $dt   = '<time datetime="' . Date::iso8601(strtotime($rs->comment_dt), dcCore::app()->auth->getInfo('user_tz')) . '">%s</time>';
                 $info = [];
                 if ($large) {
@@ -154,7 +153,7 @@ class BackendBehaviors
                 $ret .= '</li>';
             }
             $ret .= '</ul>';
-            $ret .= '<p><a href="' . dcCore::app()->admin->url->get('admin.comments', ['status' => dcBlog::COMMENT_JUNK]) . '">' . __('See all spams') . '</a></p>';
+            $ret .= '<p><a href="' . dcCore::app()->adminurl->get('admin.comments', ['status' => dcBlog::COMMENT_JUNK]) . '">' . __('See all spams') . '</a></p>';
 
             return $ret;
         }
@@ -163,7 +162,12 @@ class BackendBehaviors
                 ($recents > 0 ? ' ' . sprintf(__('since %d hour', 'since %d hours', $recents), $recents) : '') . '</p>';
     }
 
-    public static function adminDashboardContents($contents)
+    /**
+     * @param      ArrayObject<int, ArrayObject<int, string>>  $contents  The contents
+     *
+     * @return     string
+     */
+    public static function adminDashboardContents(ArrayObject $contents): string
     {
         // Add modules to the contents stack
         $preferences = My::prefs();
@@ -175,7 +179,6 @@ class BackendBehaviors
             '<img src="' . urldecode(Page::getPF('dmLastSpams/icon-dark.svg')) . '" alt="" class="dark-only icon-small" />' .
             ' ' . __('Last spams') . '</h3>';
             $ret .= BackendBehaviors::getLastSpams(
-                dcCore::app(),
                 $preferences->nb,
                 $preferences->large,
                 $preferences->author,
@@ -186,9 +189,11 @@ class BackendBehaviors
             $ret .= '</div>';
             $contents[] = new ArrayObject([$ret]);
         }
+
+        return '';
     }
 
-    public static function adminAfterDashboardOptionsUpdate()
+    public static function adminAfterDashboardOptionsUpdate(): string
     {
         // Get and store user's prefs for plugin options
         try {
@@ -206,9 +211,11 @@ class BackendBehaviors
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
         }
+
+        return '';
     }
 
-    public static function adminDashboardOptionsForm()
+    public static function adminDashboardOptionsForm(): string
     {
         $preferences = My::prefs();
 
@@ -270,5 +277,7 @@ class BackendBehaviors
             ]),
         ])
         ->render();
+
+        return '';
     }
 }
