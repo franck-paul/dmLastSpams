@@ -67,13 +67,13 @@ class BackendBehaviors
         switch (dcCore::app()->con->syntax()) {
             case 'sqlite':
                 $ret = 'datetime(\'' .
-                    dcCore::app()->con->escape('now') . '\', \'' .
-                    dcCore::app()->con->escape('-' . sprintf((string) $nb) . ' ' . $unit) .
+                    dcCore::app()->con->escapeStr('now') . '\', \'' .
+                    dcCore::app()->con->escapeStr('-' . sprintf((string) $nb) . ' ' . $unit) .
                     '\')';
 
                 break;
             case 'postgresql':
-                $ret = '(NOW() - \'' . dcCore::app()->con->escape(sprintf((string) $nb) . ' ' . $unit) . '\'::INTERVAL)';
+                $ret = '(NOW() - \'' . dcCore::app()->con->escapeStr(sprintf((string) $nb) . ' ' . $unit) . '\'::INTERVAL)';
 
                 break;
             case 'mysql':
@@ -89,7 +89,7 @@ class BackendBehaviors
     public static function getLastSpams(
         int $nb,
         bool $large,
-        string $author,
+        bool $author,
         bool $date,
         bool $time,
         int $recents = 0,
