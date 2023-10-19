@@ -18,6 +18,7 @@ use ArrayObject;
 use dcBlog;
 use dcCore;
 use dcWorkspace;
+use Dotclear\App;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Form\Checkbox;
@@ -40,7 +41,7 @@ class BackendBehaviors
             'order'      => 'comment_id DESC', // get last first
         ];
 
-        $rs = dcCore::app()->blog->getComments($sqlp);
+        $rs = App::blog()->getComments($sqlp);
 
         if ($rs->count()) {
             $rs->fetch();
@@ -52,8 +53,8 @@ class BackendBehaviors
         return
         Page::jsJson('dm_lastspams', [
             'dmLastSpams_LastSpamId'  => $last_spam_id,
-            'dmLastSpams_AutoRefresh' => $preferences->autorefresh,
-            'dmLastSpams_Badge'       => $preferences->badge,
+            'dmLastSpams_AutoRefresh' => $preferences?->autorefresh,
+            'dmLastSpams_Badge'       => $preferences?->badge,
             'dmLastSpams_LastCounter' => 0,
             'dmLastSpams_SpamCount'   => -1,
             'dmLastSpams_Interval'    => ($preferences->interval ?? 30),
@@ -110,7 +111,7 @@ class BackendBehaviors
         if ($recents > 0) {
             $params['sql'] = ' AND comment_dt >= ' . BackendBehaviors::composeSQLSince($recents) . ' ';
         }
-        $rs = dcCore::app()->blog->getComments($params, false);
+        $rs = App::blog()->getComments($params);
         if (!$rs->isEmpty()) {
             $ret = '<ul>';
             while ($rs->fetch()) {
@@ -131,10 +132,10 @@ class BackendBehaviors
                         $info[] = __('by') . ' ' . $rs->comment_author;
                     }
                     if ($date) {
-                        $info[] = sprintf($dt, __('on') . ' ' . Date::dt2str(dcCore::app()->blog->settings->system->date_format, $rs->comment_dt));
+                        $info[] = sprintf($dt, __('on') . ' ' . Date::dt2str(App::blog()->settings()->system->date_format, $rs->comment_dt));
                     }
                     if ($time) {
-                        $info[] = sprintf($dt, __('at') . ' ' . Date::dt2str(dcCore::app()->blog->settings->system->time_format, $rs->comment_dt));
+                        $info[] = sprintf($dt, __('at') . ' ' . Date::dt2str(App::blog()->settings()->system->time_format, $rs->comment_dt));
                     }
                 } else {
                     if ($author) {
@@ -171,7 +172,7 @@ class BackendBehaviors
     {
         // Add modules to the contents stack
         $preferences = My::prefs();
-        if ($preferences->active) {
+        if ($preferences?->active) {
             $class = ($preferences->large ? 'medium' : 'small');
             $ret   = '<div id="last-spams" class="box ' . $class . '">' .
             '<h3>' .
@@ -198,16 +199,18 @@ class BackendBehaviors
         // Get and store user's prefs for plugin options
         try {
             $preferences = My::prefs();
-            $preferences->put('active', !empty($_POST['dmlast_spams']), dcWorkspace::WS_BOOL);
-            $preferences->put('nb', (int) $_POST['dmlast_spams_nb'], dcWorkspace::WS_INT);
-            $preferences->put('large', empty($_POST['dmlast_spams_small']), dcWorkspace::WS_BOOL);
-            $preferences->put('author', !empty($_POST['dmlast_spams_author']), dcWorkspace::WS_BOOL);
-            $preferences->put('date', !empty($_POST['dmlast_spams_date']), dcWorkspace::WS_BOOL);
-            $preferences->put('time', !empty($_POST['dmlast_spams_time']), dcWorkspace::WS_BOOL);
-            $preferences->put('recents', (int) $_POST['dmlast_spams_recents'], dcWorkspace::WS_INT);
-            $preferences->put('autorefresh', !empty($_POST['dmlast_spams_autorefresh']), dcWorkspace::WS_BOOL);
-            $preferences->put('interval', (int) $_POST['dmlast_spams_interval'], dcWorkspace::WS_INT);
-            $preferences->put('badge', !empty($_POST['dmlast_spams_badge']), dcWorkspace::WS_BOOL);
+            if ($preferences) {
+                $preferences->put('active', !empty($_POST['dmlast_spams']), dcWorkspace::WS_BOOL);
+                $preferences->put('nb', (int) $_POST['dmlast_spams_nb'], dcWorkspace::WS_INT);
+                $preferences->put('large', empty($_POST['dmlast_spams_small']), dcWorkspace::WS_BOOL);
+                $preferences->put('author', !empty($_POST['dmlast_spams_author']), dcWorkspace::WS_BOOL);
+                $preferences->put('date', !empty($_POST['dmlast_spams_date']), dcWorkspace::WS_BOOL);
+                $preferences->put('time', !empty($_POST['dmlast_spams_time']), dcWorkspace::WS_BOOL);
+                $preferences->put('recents', (int) $_POST['dmlast_spams_recents'], dcWorkspace::WS_INT);
+                $preferences->put('autorefresh', !empty($_POST['dmlast_spams_autorefresh']), dcWorkspace::WS_BOOL);
+                $preferences->put('interval', (int) $_POST['dmlast_spams_interval'], dcWorkspace::WS_INT);
+                $preferences->put('badge', !empty($_POST['dmlast_spams_badge']), dcWorkspace::WS_BOOL);
+            }
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
         }
@@ -226,52 +229,52 @@ class BackendBehaviors
         ->legend((new Legend(__('Last spams on dashboard'))))
         ->fields([
             (new Para())->items([
-                (new Checkbox('dmlast_spams', $preferences->active))
+                (new Checkbox('dmlast_spams', $preferences?->active))
                     ->value(1)
                     ->label((new Label(__('Display last spams'), Label::INSIDE_TEXT_AFTER))),
             ]),
             (new Para())->items([
-                (new Number('dmlast_spams_nb', 1, 999, $preferences->nb))
+                (new Number('dmlast_spams_nb', 1, 999, $preferences?->nb))
                     ->label((new Label(__('Number of last spams to display:'), Label::INSIDE_TEXT_BEFORE))),
             ]),
             (new Para())->items([
-                (new Checkbox('dmlast_spams_author', $preferences->author))
+                (new Checkbox('dmlast_spams_author', $preferences?->author))
                     ->value(1)
                     ->label((new Label(__('Show authors'), Label::INSIDE_TEXT_AFTER))),
             ]),
             (new Para())->items([
-                (new Checkbox('dmlast_spams_date', $preferences->date))
+                (new Checkbox('dmlast_spams_date', $preferences?->date))
                     ->value(1)
                     ->label((new Label(__('Show dates'), Label::INSIDE_TEXT_AFTER))),
             ]),
             (new Para())->items([
-                (new Checkbox('dmlast_spams_time', $preferences->time))
+                (new Checkbox('dmlast_spams_time', $preferences?->time))
                     ->value(1)
                     ->label((new Label(__('Show times'), Label::INSIDE_TEXT_AFTER))),
             ]),
             (new Para())->items([
-                (new Number('dmlast_spams_recents', 0, 96, $preferences->recents))
+                (new Number('dmlast_spams_recents', 0, 96, $preferences?->recents))
                     ->label((new Label(__('Max age of spams to display (in hours):'), Label::INSIDE_TEXT_BEFORE))),
             ]),
             (new Para())->class('form-note')->items([
                 (new Text(null, __('Leave empty to ignore age of spams'))),
             ]),
             (new Para())->items([
-                (new Checkbox('dmlast_spams_small', !$preferences->large))
+                (new Checkbox('dmlast_spams_small', !$preferences?->large))
                     ->value(1)
                     ->label((new Label(__('Small screen'), Label::INSIDE_TEXT_AFTER))),
             ]),
             (new Para())->items([
-                (new Checkbox('dmlast_spams_autorefresh', $preferences->autorefresh))
+                (new Checkbox('dmlast_spams_autorefresh', $preferences?->autorefresh))
                     ->value(1)
                     ->label((new Label(__('Auto refresh'), Label::INSIDE_TEXT_AFTER))),
             ]),
             (new Para())->items([
-                (new Number('dmlast_spams_interval', 0, 9_999_999, $preferences->interval))
+                (new Number('dmlast_spams_interval', 0, 9_999_999, $preferences?->interval))
                     ->label((new Label(__('Interval in seconds between two refreshes:'), Label::INSIDE_TEXT_BEFORE))),
             ]),
             (new Para())->items([
-                (new Checkbox('dmlast_spams_badge', $preferences->badge))
+                (new Checkbox('dmlast_spams_badge', $preferences?->badge))
                     ->value(1)
                     ->label((new Label(__('Display badges (only if Auto refresh is enabled)'), Label::INSIDE_TEXT_AFTER))),
             ]),
