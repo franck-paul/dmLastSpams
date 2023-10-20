@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\dmLastSpams;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Process;
 
 class Backend extends Process
@@ -33,7 +33,7 @@ class Backend extends Process
             return false;
         }
 
-        dcCore::app()->addBehaviors([
+        App::behavior()->addBehaviors([
             // Dashboard behaviours
             'adminDashboardHeaders'    => BackendBehaviors::adminDashboardHeaders(...),
             'adminDashboardContentsV2' => BackendBehaviors::adminDashboardContents(...),
@@ -42,9 +42,9 @@ class Backend extends Process
             'adminDashboardOptionsFormV2'      => BackendBehaviors::adminDashboardOptionsForm(...),
         ]);
 
-        dcCore::app()->rest->addFunction('dmLastSpamsCheck', BackendRest::checkNewSpams(...));
-        dcCore::app()->rest->addFunction('dmLastSpamsRows', BackendRest::getLastSpamsRows(...));
-        dcCore::app()->rest->addFunction('dmLastSpamsCount', BackendRest::getSpamsCount(...));
+        App::rest()->addFunction('dmLastSpamsCheck', BackendRest::checkNewSpams(...));
+        App::rest()->addFunction('dmLastSpamsRows', BackendRest::getLastSpamsRows(...));
+        App::rest()->addFunction('dmLastSpamsCount', BackendRest::getSpamsCount(...));
 
         return true;
     }

@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\dmLastSpams;
 
-use dcBlog;
 use Dotclear\App;
+use Dotclear\Interface\Core\BlogInterface;
 
 class BackendRest
 {
@@ -28,7 +28,7 @@ class BackendRest
     {
         return [
             'ret' => true,
-            'nb'  => App::blog()->getComments(['comment_status' => dcBlog::COMMENT_JUNK], true)->f(0),
+            'nb'  => App::blog()->getComments(['comment_status' => BlogInterface::COMMENT_JUNK], true)->f(0),
         ];
     }
 
@@ -48,7 +48,7 @@ class BackendRest
             'no_content'     => true, // content is not required
             'order'          => 'comment_id ASC',
             'sql'            => 'AND comment_id > ' . $last_id, // only new ones
-            'comment_status' => dcBlog::COMMENT_JUNK,
+            'comment_status' => BlogInterface::COMMENT_JUNK,
         ];
 
         $rs    = App::blog()->getComments($sqlp);

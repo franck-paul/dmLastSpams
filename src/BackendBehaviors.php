@@ -15,9 +15,6 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\dmLastSpams;
 
 use ArrayObject;
-use dcBlog;
-use dcCore;
-use dcWorkspace;
 use Dotclear\App;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Helper\Date;
@@ -28,6 +25,7 @@ use Dotclear\Helper\Html\Form\Legend;
 use Dotclear\Helper\Html\Form\Number;
 use Dotclear\Helper\Html\Form\Para;
 use Dotclear\Helper\Html\Form\Text;
+use Dotclear\Interface\Core\BlogInterface;
 use Exception;
 
 class BackendBehaviors
@@ -65,16 +63,16 @@ class BackendBehaviors
 
     private static function composeSQLSince(int $nb, string $unit = 'HOUR'): string
     {
-        switch (dcCore::app()->con->syntax()) {
+        switch (App::con()->syntax()) {
             case 'sqlite':
                 $ret = 'datetime(\'' .
-                    dcCore::app()->con->escapeStr('now') . '\', \'' .
-                    dcCore::app()->con->escapeStr('-' . sprintf((string) $nb) . ' ' . $unit) .
+                    App::con()->escapeStr('now') . '\', \'' .
+                    App::con()->escapeStr('-' . sprintf((string) $nb) . ' ' . $unit) .
                     '\')';
 
                 break;
             case 'postgresql':
-                $ret = '(NOW() - \'' . dcCore::app()->con->escapeStr(sprintf((string) $nb) . ' ' . $unit) . '\'::INTERVAL)';
+                $ret = '(NOW() - \'' . App::con()->escapeStr(sprintf((string) $nb) . ' ' . $unit) . '\'::INTERVAL)';
 
                 break;
             case 'mysql':
@@ -107,7 +105,7 @@ class BackendBehaviors
         } else {
             $params['limit'] = 30; // As in first page of comments' list
         }
-        $params['comment_status'] = dcBlog::COMMENT_JUNK;
+        $params['comment_status'] = BlogInterface::COMMENT_JUNK;
         if ($recents > 0) {
             $params['sql'] = ' AND comment_dt >= ' . BackendBehaviors::composeSQLSince($recents) . ' ';
         }
@@ -120,12 +118,12 @@ class BackendBehaviors
                     $ret .= ' dmls-new';
                     $last_counter++;
                 }
-                if ($rs->comment_status == dcBlog::COMMENT_JUNK) {
+                if ($rs->comment_status == BlogInterface::COMMENT_JUNK) {
                     $ret .= ' sts-junk';
                 }
                 $ret .= '" id="dmls' . $rs->comment_id . '">';
-                $ret .= '<a href="' . dcCore::app()->adminurl->get('admin.comment', ['id' => $rs->comment_id]) . '">' . $rs->post_title . '</a>';
-                $dt   = '<time datetime="' . Date::iso8601(strtotime($rs->comment_dt), dcCore::app()->auth->getInfo('user_tz')) . '">%s</time>';
+                $ret .= '<a href="' . App::backend()->url()->get('admin.comment', ['id' => $rs->comment_id]) . '">' . $rs->post_title . '</a>';
+                $dt   = '<time datetime="' . Date::iso8601(strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '">%s</time>';
                 $info = [];
                 if ($large) {
                     if ($author) {
@@ -154,7 +152,7 @@ class BackendBehaviors
                 $ret .= '</li>';
             }
             $ret .= '</ul>';
-            $ret .= '<p><a href="' . dcCore::app()->adminurl->get('admin.comments', ['status' => dcBlog::COMMENT_JUNK]) . '">' . __('See all spams') . '</a></p>';
+            $ret .= '<p><a href="' . App::backend()->url()->get('admin.comments', ['status' => BlogInterface::COMMENT_JUNK]) . '">' . __('See all spams') . '</a></p>';
 
             return $ret;
         }
@@ -200,19 +198,19 @@ class BackendBehaviors
         try {
             $preferences = My::prefs();
             if ($preferences) {
-                $preferences->put('active', !empty($_POST['dmlast_spams']), dcWorkspace::WS_BOOL);
-                $preferences->put('nb', (int) $_POST['dmlast_spams_nb'], dcWorkspace::WS_INT);
-                $preferences->put('large', empty($_POST['dmlast_spams_small']), dcWorkspace::WS_BOOL);
-                $preferences->put('author', !empty($_POST['dmlast_spams_author']), dcWorkspace::WS_BOOL);
-                $preferences->put('date', !empty($_POST['dmlast_spams_date']), dcWorkspace::WS_BOOL);
-                $preferences->put('time', !empty($_POST['dmlast_spams_time']), dcWorkspace::WS_BOOL);
-                $preferences->put('recents', (int) $_POST['dmlast_spams_recents'], dcWorkspace::WS_INT);
-                $preferences->put('autorefresh', !empty($_POST['dmlast_spams_autorefresh']), dcWorkspace::WS_BOOL);
-                $preferences->put('interval', (int) $_POST['dmlast_spams_interval'], dcWorkspace::WS_INT);
-                $preferences->put('badge', !empty($_POST['dmlast_spams_badge']), dcWorkspace::WS_BOOL);
+                $preferences->put('active', !empty($_POST['dmlast_spams']), App::userWorkspace()::WS_BOOL);
+                $preferences->put('nb', (int) $_POST['dmlast_spams_nb'], App::userWorkspace()::WS_INT);
+                $preferences->put('large', empty($_POST['dmlast_spams_small']), App::userWorkspace()::WS_BOOL);
+                $preferences->put('author', !empty($_POST['dmlast_spams_author']), App::userWorkspace()::WS_BOOL);
+                $preferences->put('date', !empty($_POST['dmlast_spams_date']), App::userWorkspace()::WS_BOOL);
+                $preferences->put('time', !empty($_POST['dmlast_spams_time']), App::userWorkspace()::WS_BOOL);
+                $preferences->put('recents', (int) $_POST['dmlast_spams_recents'], App::userWorkspace()::WS_INT);
+                $preferences->put('autorefresh', !empty($_POST['dmlast_spams_autorefresh']), App::userWorkspace()::WS_BOOL);
+                $preferences->put('interval', (int) $_POST['dmlast_spams_interval'], App::userWorkspace()::WS_INT);
+                $preferences->put('badge', !empty($_POST['dmlast_spams_badge']), App::userWorkspace()::WS_BOOL);
             }
         } catch (Exception $e) {
-            dcCore::app()->error->add($e->getMessage());
+            App::error()->add($e->getMessage());
         }
 
         return '';

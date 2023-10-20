@@ -17,11 +17,9 @@ $this->registerModule(
     '3.0',
     [
         'requires'    => [['core', '2.28']],
-        'permissions' => dcCore::app()->auth->makePermissions([
-            dcAuth::PERMISSION_ADMIN,
-        ]),
-        'type'     => 'plugin',
-        'settings' => [
+        'permissions' => 'My',
+        'type'        => 'plugin',
+        'settings'    => [
             'pref' => '#user-favorites.dmlastspams',
         ],
 

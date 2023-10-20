@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\dmLastSpams;
 
-use dcCore;
-use dcWorkspace;
+use Dotclear\App;
 use Dotclear\Core\Process;
+use Dotclear\Interface\Core\UserWorkspaceInterface;
 use Exception;
 
 class Install extends Process
@@ -34,15 +34,15 @@ class Install extends Process
 
         try {
             // Update
-            $old_version = dcCore::app()->getVersion(My::id());
+            $old_version = App::version()->getVersion(My::id());
             if (version_compare((string) $old_version, '2.0', '<')) {
                 // Rename settings workspace
-                if (dcCore::app()->auth->user_prefs->exists('dmlastspams')) {
-                    dcCore::app()->auth->user_prefs->delWorkspace(My::id());
-                    dcCore::app()->auth->user_prefs->renWorkspace('dmlastspams', My::id());
+                if (App::auth()->prefs()->exists('dmlastspams')) {
+                    App::auth()->prefs()->delWorkspace(My::id());
+                    App::auth()->prefs()->renWorkspace('dmlastspams', My::id());
                 }
                 // Change settings names (remove last_spams_ prefix in them)
-                $rename = function (string $name, dcWorkspace $preferences): void {
+                $rename = function (string $name, UserWorkspaceInterface $preferences): void {
                     if ($preferences->prefExists('last_spams_' . $name, true)) {
                         $preferences->rename('last_spams_' . $name, $name);
                     }
@@ -60,19 +60,19 @@ class Install extends Process
             // Default prefs for last spams
             $preferences = My::prefs();
             if ($preferences) {
-                $preferences->put('active', false, dcWorkspace::WS_BOOL, 'Display last spams', false, true);
-                $preferences->put('nb', 5, dcWorkspace::WS_INT, 'Number of last spams displayed', false, true);
-                $preferences->put('large', true, dcWorkspace::WS_BOOL, 'Large display', false, true);
-                $preferences->put('author', true, dcWorkspace::WS_BOOL, 'Show authors', false, true);
-                $preferences->put('date', true, dcWorkspace::WS_BOOL, 'Show dates', false, true);
-                $preferences->put('time', true, dcWorkspace::WS_BOOL, 'Show times', false, true);
-                $preferences->put('recents', 0, dcWorkspace::WS_INT, 'Max age of spams (in hours)', false, true);
-                $preferences->put('autorefresh', false, dcWorkspace::WS_BOOL, 'Auto refresh', false, true);
-                $preferences->put('interval', 30, dcWorkspace::WS_INT, 'Interval between two refreshes', false, true);
-                $preferences->put('badge', true, dcWorkspace::WS_BOOL, 'Display counter (Auto refresh only)', false, true);
+                $preferences->put('active', false, App::userWorkspace()::WS_BOOL, 'Display last spams', false, true);
+                $preferences->put('nb', 5, App::userWorkspace()::WS_INT, 'Number of last spams displayed', false, true);
+                $preferences->put('large', true, App::userWorkspace()::WS_BOOL, 'Large display', false, true);
+                $preferences->put('author', true, App::userWorkspace()::WS_BOOL, 'Show authors', false, true);
+                $preferences->put('date', true, App::userWorkspace()::WS_BOOL, 'Show dates', false, true);
+                $preferences->put('time', true, App::userWorkspace()::WS_BOOL, 'Show times', false, true);
+                $preferences->put('recents', 0, App::userWorkspace()::WS_INT, 'Max age of spams (in hours)', false, true);
+                $preferences->put('autorefresh', false, App::userWorkspace()::WS_BOOL, 'Auto refresh', false, true);
+                $preferences->put('interval', 30, App::userWorkspace()::WS_INT, 'Interval between two refreshes', false, true);
+                $preferences->put('badge', true, App::userWorkspace()::WS_BOOL, 'Display counter (Auto refresh only)', false, true);
             }
         } catch (Exception $e) {
-            dcCore::app()->error->add($e->getMessage());
+            App::error()->add($e->getMessage());
         }
 
         return true;
