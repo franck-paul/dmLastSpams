@@ -123,7 +123,7 @@ class BackendBehaviors
                 }
                 $ret .= '" id="dmls' . $rs->comment_id . '">';
                 $ret .= '<a href="' . App::backend()->url()->get('admin.comment', ['id' => $rs->comment_id]) . '">' . $rs->post_title . '</a>';
-                $dt   = '<time datetime="' . Date::iso8601(strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '">%s</time>';
+                $dt   = '<time datetime="' . Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '">%s</time>';
                 $info = [];
                 if ($large) {
                     if ($author) {
