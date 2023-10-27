@@ -66,17 +66,17 @@ class BackendBehaviors
             case 'sqlite':
                 $ret = 'datetime(\'' .
                     App::con()->escapeStr('now') . '\', \'' .
-                    App::con()->escapeStr('-' . sprintf((string) $nb) . ' ' . $unit) .
+                    App::con()->escapeStr('-' . (string) $nb . ' ' . $unit) .
                     '\')';
 
                 break;
             case 'postgresql':
-                $ret = '(NOW() - \'' . App::con()->escapeStr(sprintf((string) $nb) . ' ' . $unit) . '\'::INTERVAL)';
+                $ret = '(NOW() - \'' . App::con()->escapeStr((string) $nb . ' ' . $unit) . '\'::INTERVAL)';
 
                 break;
             case 'mysql':
             default:
-                $ret = '(NOW() - INTERVAL ' . sprintf((string) $nb) . ' ' . $unit . ')';
+                $ret = '(NOW() - INTERVAL ' . (string) $nb . ' ' . $unit . ')';
 
                 break;
         }
@@ -104,10 +104,12 @@ class BackendBehaviors
         } else {
             $params['limit'] = 30; // As in first page of comments' list
         }
+
         $params['comment_status'] = App::blog()::COMMENT_JUNK;
         if ($recents > 0) {
-            $params['sql'] = ' AND comment_dt >= ' . BackendBehaviors::composeSQLSince($recents) . ' ';
+            $params['sql'] = ' AND comment_dt >= ' . self::composeSQLSince($recents) . ' ';
         }
+
         $rs = App::blog()->getComments($params);
         if (!$rs->isEmpty()) {
             $ret = '<ul>';
@@ -115,11 +117,13 @@ class BackendBehaviors
                 $ret .= '<li class="line';
                 if ($last_id !== -1 && $rs->comment_id > $last_id) {
                     $ret .= ' dmls-new';
-                    $last_counter++;
+                    ++$last_counter;
                 }
+
                 if ($rs->comment_status == App::blog()::COMMENT_JUNK) {
                     $ret .= ' sts-junk';
                 }
+
                 $ret .= '" id="dmls' . $rs->comment_id . '">';
                 $ret .= '<a href="' . App::backend()->url()->get('admin.comment', ['id' => $rs->comment_id]) . '">' . $rs->post_title . '</a>';
                 $dt   = '<time datetime="' . Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '">%s</time>';
@@ -128,9 +132,11 @@ class BackendBehaviors
                     if ($author) {
                         $info[] = __('by') . ' ' . $rs->comment_author;
                     }
+
                     if ($date) {
                         $info[] = sprintf($dt, __('on') . ' ' . Date::dt2str(App::blog()->settings()->system->date_format, $rs->comment_dt));
                     }
+
                     if ($time) {
                         $info[] = sprintf($dt, __('at') . ' ' . Date::dt2str(App::blog()->settings()->system->time_format, $rs->comment_dt));
                     }
@@ -138,22 +144,26 @@ class BackendBehaviors
                     if ($author) {
                         $info[] = $rs->comment_author;
                     }
+
                     if ($date) {
                         $info[] = sprintf($dt, Date::dt2str(__('%Y-%m-%d'), $rs->comment_dt));
                     }
+
                     if ($time) {
                         $info[] = sprintf($dt, Date::dt2str(__('%H:%M'), $rs->comment_dt));
                     }
                 }
-                if (count($info)) {
+
+                if ($info !== []) {
                     $ret .= ' (' . implode(' ', $info) . ')';
                 }
+
                 $ret .= '</li>';
             }
-            $ret .= '</ul>';
-            $ret .= '<p><a href="' . App::backend()->url()->get('admin.comments', ['status' => App::blog()::COMMENT_JUNK]) . '">' . __('See all spams') . '</a></p>';
 
-            return $ret;
+            $ret .= '</ul>';
+
+            return $ret . ('<p><a href="' . App::backend()->url()->get('admin.comments', ['status' => App::blog()::COMMENT_JUNK]) . '">' . __('See all spams') . '</a></p>');
         }
 
         return '<p>' . __('No spams') .
@@ -208,8 +218,8 @@ class BackendBehaviors
                 $preferences->put('interval', (int) $_POST['dmlast_spams_interval'], App::userWorkspace()::WS_INT);
                 $preferences->put('badge', !empty($_POST['dmlast_spams_badge']), App::userWorkspace()::WS_BOOL);
             }
-        } catch (Exception $e) {
-            App::error()->add($e->getMessage());
+        } catch (Exception $exception) {
+            App::error()->add($exception->getMessage());
         }
 
         return '';
