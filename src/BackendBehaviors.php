@@ -171,7 +171,7 @@ class BackendBehaviors
     }
 
     /**
-     * @param      ArrayObject<int, ArrayObject<int, string>>  $contents  The contents
+     * @param      ArrayObject<int, ArrayObject<int, non-falsy-string>>  $contents  The contents
      *
      * @return     string
      */
@@ -183,8 +183,8 @@ class BackendBehaviors
             $class = ($preferences->large ? 'medium' : 'small');
             $ret   = '<div id="last-spams" class="box ' . $class . '">' .
             '<h3>' .
-            '<img src="' . urldecode(Page::getPF('dmLastSpams/icon.svg')) . '" alt="" class="light-only icon-small" />' .
-            '<img src="' . urldecode(Page::getPF('dmLastSpams/icon-dark.svg')) . '" alt="" class="dark-only icon-small" />' .
+            '<img src="' . urldecode(Page::getPF('dmLastSpams/icon.svg')) . '" alt="" class="light-only icon-small">' .
+            '<img src="' . urldecode(Page::getPF('dmLastSpams/icon-dark.svg')) . '" alt="" class="dark-only icon-small">' .
             ' ' . __('Last spams') . '</h3>';
             $ret .= BackendBehaviors::getLastSpams(
                 $preferences->nb,
@@ -195,7 +195,7 @@ class BackendBehaviors
                 $preferences->recents
             );
             $ret .= '</div>';
-            $contents[] = new ArrayObject([$ret]);
+            $contents->append(new ArrayObject([$ret]));
         }
 
         return '';
