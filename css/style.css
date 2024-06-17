@@ -5,6 +5,13 @@ ul.expandable {
 
 #last-spams li {
   word-break: break-all;
+
+  &.sts-pending {
+    font-style: italic;
+  }
+  &.sts-unpublished {
+    text-decoration: line-through;
+  }
 }
 
 #last-spams li.dmls-new {

@@ -1,1 +1,1 @@
-ul.expandable{list-style-type:none;padding-left:.5em}#last-spams li{word-break:break-all}#last-spams li.dmls-new{animation-name:dmls-new;animation-duration:2s}#last-spams li.dmls-new::after{content:' \02605'}@keyframes dmls-new{from{opacity:.2}to{opacity:1}}
+ul.expandable{list-style-type:none;padding-left:.5em}#last-spams li{word-break:break-all}&.sts-unpublished{text-decoration:line-through}#last-spams li.dmls-new::after{content:' \02605'}@keyframes dmls-new{from{opacity:.2}to{opacity:1}}

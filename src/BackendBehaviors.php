@@ -120,12 +120,24 @@ class BackendBehaviors
                     ++$last_counter;
                 }
 
-                if ($rs->comment_status == App::blog()::COMMENT_JUNK) {
-                    $ret .= ' sts-junk';
-                }
+                $ret .= ' sts-' . match ((int) $rs->comment_status) {
+                    App::blog()::COMMENT_JUNK        => 'junk',
+                    App::blog()::COMMENT_PENDING     => 'pending',
+                    App::blog()::COMMENT_PUBLISHED   => 'published',
+                    App::blog()::COMMENT_UNPUBLISHED => 'unpublished',
+                    default                          => 'unknown',
+                };
+
+                $title = match ((int) $rs->comment_status) {
+                    App::blog()::COMMENT_JUNK        => __('Junk'),
+                    App::blog()::COMMENT_PENDING     => __('Pending'),
+                    App::blog()::COMMENT_PUBLISHED   => __('Published'),
+                    App::blog()::COMMENT_UNPUBLISHED => __('Unpublished'),
+                    default                          => '',
+                };
 
                 $ret .= '" id="dmls' . $rs->comment_id . '">';
-                $ret .= '<a href="' . App::backend()->url()->get('admin.comment', ['id' => $rs->comment_id]) . '">' . $rs->post_title . '</a>';
+                $ret .= '<a href="' . App::backend()->url()->get('admin.comment', ['id' => $rs->comment_id]) . '" title="' . $title . '">' . $rs->post_title . '</a>';
                 $dt   = '<time datetime="' . Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '">%s</time>';
                 $info = [];
                 if ($large) {

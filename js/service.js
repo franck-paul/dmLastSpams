@@ -134,7 +134,7 @@ dotclear.dmLastSpamsView = (line, action = 'toggle', e = null) => {
     return;
   }
 
-  const spamId = $(line).attr('id').substr(4);
+  const spamId = $(line).attr('id').substring(4);
   const lineId = `dmlse${spamId}`;
   let li = document.getElementById(lineId);
 
@@ -156,10 +156,10 @@ dotclear.dmLastSpamsView = (line, action = 'toggle', e = null) => {
           $(li).append(content);
           $(line).addClass('expand');
           line.parentNode.insertBefore(li, line.nextSibling);
-        } else {
-          // No content, content not found or server error
-          $(line).removeClass('expand');
+          return;
         }
+        // No content, content not found or server error
+        $(line).removeClass('expand');
       },
       {
         metadata: false,
