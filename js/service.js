@@ -171,14 +171,17 @@ dotclear.dmLastSpamsView = (line, action = 'toggle', e = null) => {
 
 $(() => {
   Object.assign(dotclear, dotclear.getData('dm_lastspams'));
+
   $.expandContent({
     lines: $('#last-spams li.line'),
     callback: dotclear.dmLastSpamsView,
   });
   $('#last-spams ul').addClass('expandable');
+
   if (!dotclear.dmLastSpams_AutoRefresh) {
     return;
   }
+
   // First pass
   dotclear.dmLastSpamsCheck();
   // Auto refresh requested : Set interval between two checks for new comments and spam counter check

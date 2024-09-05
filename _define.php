@@ -25,6 +25,6 @@ $this->registerModule(
 
         'details'    => 'https://open-time.net/?q=dmlastspams',
         'support'    => 'https://github.com/franck-paul/dmlastspams',
-        'repository' => 'https://raw.githubusercontent.com/franck-paul/dmlastspams/master/dcstore.xml',
+        'repository' => 'https://raw.githubusercontent.com/franck-paul/dmlastspams/main/dcstore.xml',
     ]
 );
