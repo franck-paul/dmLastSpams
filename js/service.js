@@ -10,11 +10,11 @@ dotclear.dmLastSpamsCount = (icon) => {
         if (response?.success) {
           if (response?.payload.ret) {
             const nb_spams = response.payload.nb;
-            if (nb_spams !== undefined && nb_spams != dotclear.dmLastSpams_SpamCount) {
+            if (nb_spams !== undefined && nb_spams !== dotclear.dmLastSpams_SpamCount) {
               dotclear.badge(icon, {
                 id: 'dmls',
-                remove: nb_spams == 0,
                 value: nb_spams,
+                remove: !nb_spams,
                 sibling: true,
                 icon: true,
               });
@@ -62,7 +62,7 @@ dotclear.dmLastSpamsRows = (last_id) => {
               dotclear.badge($('#last-spams'), {
                 id: 'dmls',
                 value: dotclear.dmLastSpams_LastCounter,
-                remove: dotclear.dmLastSpams_LastCounter == 0,
+                remove: !dotclear.dmLastSpams_LastCounter,
               });
             }
             // Bind every new lines for viewing comment content
@@ -130,7 +130,7 @@ dotclear.dmLastSpamsCheck = () => {
 };
 
 dotclear.dmLastSpamsView = (line, action = 'toggle', e = null) => {
-  if ($(line).attr('id') == undefined) {
+  if ($(line).attr('id') === undefined) {
     return;
   }
 
@@ -169,7 +169,7 @@ dotclear.dmLastSpamsView = (line, action = 'toggle', e = null) => {
   }
 };
 
-$(() => {
+dotclear.ready(() => {
   Object.assign(dotclear, dotclear.getData('dm_lastspams'));
 
   $.expandContent({
