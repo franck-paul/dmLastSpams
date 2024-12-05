@@ -14,7 +14,7 @@ dotclear.dmLastSpamsCount = (icon) => {
               dotclear.badge(icon, {
                 id: 'dmls',
                 value: nb_spams,
-                remove: !nb_spams,
+                remove: nb_spams <= 0,
                 sibling: true,
                 icon: true,
               });
@@ -62,7 +62,7 @@ dotclear.dmLastSpamsRows = (last_id) => {
               dotclear.badge($('#last-spams'), {
                 id: 'dmls',
                 value: dotclear.dmLastSpams_LastCounter,
-                remove: !dotclear.dmLastSpams_LastCounter,
+                remove: dotclear.dmLasSpams_Lastcounter <= 0,
               });
             }
             // Bind every new lines for viewing comment content

@@ -28,7 +28,7 @@ class BackendRest
     {
         return [
             'ret' => true,
-            'nb'  => App::blog()->getComments(['comment_status' => App::blog()::COMMENT_JUNK], true)->f(0),
+            'nb'  => (int) App::blog()->getComments(['comment_status' => App::blog()::COMMENT_JUNK], true)->f(0),
         ];
     }
 
