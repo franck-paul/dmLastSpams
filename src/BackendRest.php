@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief dmLastSpams, a plugin for Dotclear 2
  *
@@ -91,9 +92,6 @@ class BackendRest
         }
 
         $preferences = My::prefs();
-        if (!$preferences) {
-            return $payload;
-        }
 
         $list = BackendBehaviors::getLastSpams(
             $preferences->nb,

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief dmLastSpams, a plugin for Dotclear 2
  *
@@ -43,36 +44,32 @@ class Install extends Process
                 }
 
                 // Change settings names (remove last_spams_ prefix in them)
-                $rename = static function (string $name, UserWorkspaceInterface $preferences) : void {
+                $rename = static function (string $name, UserWorkspaceInterface $preferences): void {
                     if ($preferences->prefExists('last_spams_' . $name, true)) {
                         $preferences->rename('last_spams_' . $name, $name);
                     }
                 };
 
                 $preferences = My::prefs();
-                if ($preferences) {
-                    foreach (['nb', 'large', 'author', 'date', 'time', 'recents', 'autorefresh', 'badge'] as $pref) {
-                        $rename($pref, $preferences);
-                    }
-
-                    $preferences->rename('last_spams', 'active');
+                foreach (['nb', 'large', 'author', 'date', 'time', 'recents', 'autorefresh', 'badge'] as $pref) {
+                    $rename($pref, $preferences);
                 }
+
+                $preferences->rename('last_spams', 'active');
             }
 
             // Default prefs for last spams
             $preferences = My::prefs();
-            if ($preferences) {
-                $preferences->put('active', false, App::userWorkspace()::WS_BOOL, 'Display last spams', false, true);
-                $preferences->put('nb', 5, App::userWorkspace()::WS_INT, 'Number of last spams displayed', false, true);
-                $preferences->put('large', true, App::userWorkspace()::WS_BOOL, 'Large display', false, true);
-                $preferences->put('author', true, App::userWorkspace()::WS_BOOL, 'Show authors', false, true);
-                $preferences->put('date', true, App::userWorkspace()::WS_BOOL, 'Show dates', false, true);
-                $preferences->put('time', true, App::userWorkspace()::WS_BOOL, 'Show times', false, true);
-                $preferences->put('recents', 0, App::userWorkspace()::WS_INT, 'Max age of spams (in hours)', false, true);
-                $preferences->put('autorefresh', false, App::userWorkspace()::WS_BOOL, 'Auto refresh', false, true);
-                $preferences->put('interval', 30, App::userWorkspace()::WS_INT, 'Interval between two refreshes', false, true);
-                $preferences->put('badge', true, App::userWorkspace()::WS_BOOL, 'Display counter (Auto refresh only)', false, true);
-            }
+            $preferences->put('active', false, App::userWorkspace()::WS_BOOL, 'Display last spams', false, true);
+            $preferences->put('nb', 5, App::userWorkspace()::WS_INT, 'Number of last spams displayed', false, true);
+            $preferences->put('large', true, App::userWorkspace()::WS_BOOL, 'Large display', false, true);
+            $preferences->put('author', true, App::userWorkspace()::WS_BOOL, 'Show authors', false, true);
+            $preferences->put('date', true, App::userWorkspace()::WS_BOOL, 'Show dates', false, true);
+            $preferences->put('time', true, App::userWorkspace()::WS_BOOL, 'Show times', false, true);
+            $preferences->put('recents', 0, App::userWorkspace()::WS_INT, 'Max age of spams (in hours)', false, true);
+            $preferences->put('autorefresh', false, App::userWorkspace()::WS_BOOL, 'Auto refresh', false, true);
+            $preferences->put('interval', 30, App::userWorkspace()::WS_INT, 'Interval between two refreshes', false, true);
+            $preferences->put('badge', true, App::userWorkspace()::WS_BOOL, 'Display counter (Auto refresh only)', false, true);
         } catch (Exception $exception) {
             App::error()->add($exception->getMessage());
         }
