@@ -63,24 +63,15 @@ class BackendBehaviors
 
     private static function composeSQLSince(int $nb, string $unit = 'HOUR'): string
     {
-        switch (App::con()->syntax()) {
-            case 'sqlite':
-                $ret = 'datetime(\'' .
-                    App::con()->escapeStr('now') . '\', \'' .
-                    App::con()->escapeStr('-' . (string) $nb . ' ' . $unit) .
-                    '\')';
-
-                break;
-            case 'postgresql':
-                $ret = '(NOW() - \'' . App::con()->escapeStr((string) $nb . ' ' . $unit) . '\'::INTERVAL)';
-
-                break;
-            case 'mysql':
-            default:
-                $ret = '(NOW() - INTERVAL ' . (string) $nb . ' ' . $unit . ')';
-
-                break;
-        }
+        $ret = match (App::con()->syntax()) {
+            'sqlite' => 'datetime(\'' .
+                App::con()->escapeStr('now') . '\', \'' .
+                App::con()->escapeStr('-' . (string) $nb . ' ' . $unit) .
+                '\')',
+            'postgresql' => '(NOW() - \'' . App::con()->escapeStr((string) $nb . ' ' . $unit) . '\'::INTERVAL)',
+            // default also stands for MySQL
+            default => '(NOW() - INTERVAL ' . (string) $nb . ' ' . $unit . ')',
+        };
 
         return $ret;
     }
