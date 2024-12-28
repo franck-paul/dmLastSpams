@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief dmLastSpams, a plugin for Dotclear 2
  *
@@ -22,7 +23,8 @@ class Backend extends Process
     public static function init(): bool
     {
         // dead but useful code, in order to have translations
-        __('Last Spams Dashboard Module') . __('Display last spams on dashboard');
+        __('Last Spams Dashboard Module');
+        __('Display last spams on dashboard');
 
         return self::status(My::checkContext(My::BACKEND));
     }
