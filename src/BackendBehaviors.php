@@ -94,7 +94,7 @@ class BackendBehaviors
             $params['limit'] = 30; // As in first page of comments' list
         }
 
-        $params['comment_status'] = App::blog()::COMMENT_JUNK;
+        $params['comment_status'] = App::status()->comment()::JUNK;
         if ($recents > 0) {
             $params['sql'] = ' AND comment_dt >= ' . self::composeSQLSince($recents) . ' ';
         }
@@ -110,19 +110,19 @@ class BackendBehaviors
                 }
 
                 $ret .= ' sts-' . match ((int) $rs->comment_status) {
-                    App::blog()::COMMENT_JUNK        => 'junk',
-                    App::blog()::COMMENT_PENDING     => 'pending',
-                    App::blog()::COMMENT_PUBLISHED   => 'published',
-                    App::blog()::COMMENT_UNPUBLISHED => 'unpublished',
-                    default                          => 'unknown',
+                    App::status()->comment()::JUNK        => 'junk',
+                    App::status()->comment()::PENDING     => 'pending',
+                    App::status()->comment()::PUBLISHED   => 'published',
+                    App::status()->comment()::UNPUBLISHED => 'unpublished',
+                    default                               => 'unknown',
                 };
 
                 $title = match ((int) $rs->comment_status) {
-                    App::blog()::COMMENT_JUNK        => __('Junk'),
-                    App::blog()::COMMENT_PENDING     => __('Pending'),
-                    App::blog()::COMMENT_PUBLISHED   => __('Published'),
-                    App::blog()::COMMENT_UNPUBLISHED => __('Unpublished'),
-                    default                          => '',
+                    App::status()->comment()::JUNK        => __('Junk'),
+                    App::status()->comment()::PENDING     => __('Pending'),
+                    App::status()->comment()::PUBLISHED   => __('Published'),
+                    App::status()->comment()::UNPUBLISHED => __('Unpublished'),
+                    default                               => '',
                 };
 
                 $ret .= '" id="dmls' . $rs->comment_id . '">';
@@ -164,7 +164,7 @@ class BackendBehaviors
 
             $ret .= '</ul>';
 
-            return $ret . ('<p><a href="' . App::backend()->url()->get('admin.comments', ['status' => App::blog()::COMMENT_JUNK]) . '">' . __('See all spams') . '</a></p>');
+            return $ret . ('<p><a href="' . App::backend()->url()->get('admin.comments', ['status' => App::status()->comment()::JUNK]) . '">' . __('See all spams') . '</a></p>');
         }
 
         return '<p>' . __('No spams') .

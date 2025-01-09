@@ -28,7 +28,7 @@ class BackendRest
     {
         return [
             'ret' => true,
-            'nb'  => (int) App::blog()->getComments(['comment_status' => App::blog()::COMMENT_JUNK], true)->f(0),
+            'nb'  => (int) App::blog()->getComments(['comment_status' => App::status()->comment()::JUNK], true)->f(0),
         ];
     }
 
@@ -48,7 +48,7 @@ class BackendRest
             'no_content'     => true, // content is not required
             'order'          => 'comment_id ASC',
             'sql'            => 'AND comment_id > ' . $last_id, // only new ones
-            'comment_status' => App::blog()::COMMENT_JUNK,
+            'comment_status' => App::status()->comment()::JUNK,
         ];
 
         $rs    = App::blog()->getComments($sqlp);
