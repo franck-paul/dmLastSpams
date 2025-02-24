@@ -18,14 +18,22 @@ namespace Dotclear\Plugin\dmLastSpams;
 use ArrayObject;
 use Dotclear\App;
 use Dotclear\Core\Backend\Page;
+use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Form\Checkbox;
+use Dotclear\Helper\Html\Form\Div;
 use Dotclear\Helper\Html\Form\Fieldset;
+use Dotclear\Helper\Html\Form\Img;
 use Dotclear\Helper\Html\Form\Label;
 use Dotclear\Helper\Html\Form\Legend;
+use Dotclear\Helper\Html\Form\Li;
+use Dotclear\Helper\Html\Form\Link;
+use Dotclear\Helper\Html\Form\Note;
 use Dotclear\Helper\Html\Form\Number;
 use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Set;
 use Dotclear\Helper\Html\Form\Text;
+use Dotclear\Helper\Html\Form\Ul;
 use Exception;
 
 class BackendBehaviors
@@ -101,78 +109,91 @@ class BackendBehaviors
 
         $rs = App::blog()->getComments($params);
         if (!$rs->isEmpty()) {
-            $ret = '<ul>';
-            while ($rs->fetch()) {
-                $ret .= '<li class="line';
-                if ($last_id !== -1 && $rs->comment_id > $last_id) {
-                    $ret .= ' dmls-new';
-                    ++$last_counter;
+            $lines = function (MetaRecord $rs, bool $large) use ($date, $time, $last_id, &$last_counter) {
+                while ($rs->fetch()) {
+                    $status = match ((int) $rs->comment_status) {
+                        App::status()->comment()::JUNK        => 'sts-junk',
+                        App::status()->comment()::PENDING     => 'sts-pending',
+                        App::status()->comment()::PUBLISHED   => 'sts-published',
+                        App::status()->comment()::UNPUBLISHED => 'sts-unpublished',
+                        default                               => 'sts-unknown',
+                    };
+                    $title = match ((int) $rs->comment_status) {
+                        App::status()->comment()::JUNK        => __('Junk'),
+                        App::status()->comment()::PENDING     => __('Pending'),
+                        App::status()->comment()::PUBLISHED   => __('Published'),
+                        App::status()->comment()::UNPUBLISHED => __('Unpublished'),
+                        default                               => '',
+                    };
+                    $new = '';
+                    if ($last_id !== -1 && $rs->comment_id > $last_id) {
+                        $new = 'dmls-new';
+                        ++$last_counter;
+                    }
+                    $infos = [];
+                    if ($large) {
+                        $details = __('on') . ' ' .
+                            Date::dt2str(App::blog()->settings()->system->date_format, $rs->comment_dt, App::auth()->getInfo('user_tz')) . ' ' .
+                            Date::dt2str(App::blog()->settings()->system->time_format, $rs->comment_dt, App::auth()->getInfo('user_tz'));
+
+                        $infos[] = (new Text(null, __('by') . ' ' . $rs->comment_author));
+                        if ($date) {
+                            $details = __('on') . ' ' . Date::dt2str(App::blog()->settings()->system->date_format, $rs->comment_dt, App::auth()->getInfo('user_tz'));
+                            $infos[] = (new Text('time', $details))
+                                ->extra('datetime="' . Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '"');
+                        }
+                        if ($time) {
+                            $details = __('at') . ' ' . Date::dt2str(App::blog()->settings()->system->time_format, $rs->comment_dt, App::auth()->getInfo('user_tz'));
+                            $infos[] = (new Text('time', $details))
+                                ->extra('datetime="' . Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '"');
+                        }
+                    } else {
+                        $infos[] = (new Text(null, $rs->comment_author));
+                        if ($date) {
+                            $infos[] = (new Text('time', Date::dt2str(__('%Y-%m-%d'), $rs->comment_dt, App::auth()->getInfo('user_tz'))))
+                                ->extra('datetime="' . Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '"');
+                        }
+                        if ($time) {
+                            $infos[] = (new Text('time', Date::dt2str(__('%H:%M'), $rs->comment_dt, App::auth()->getInfo('user_tz'))))
+                                ->extra('datetime="' . Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '"');
+                        }
+                    }
+                    yield (new Li('dmls' . $rs->comment_id))
+                        ->class(['line', $status, $new])
+                        ->separator(' ')
+                        ->items([
+                            (new Link())
+                                ->href(App::backend()->url()->get('admin.comment', ['id' => $rs->comment_id]))
+                                ->title($title)
+                                ->text($rs->post_title),
+                            ... $infos,
+                        ]);
                 }
+            };
 
-                $ret .= ' sts-' . match ((int) $rs->comment_status) {
-                    App::status()->comment()::JUNK        => 'junk',
-                    App::status()->comment()::PENDING     => 'pending',
-                    App::status()->comment()::PUBLISHED   => 'published',
-                    App::status()->comment()::UNPUBLISHED => 'unpublished',
-                    default                               => 'unknown',
-                };
-
-                $title = match ((int) $rs->comment_status) {
-                    App::status()->comment()::JUNK        => __('Junk'),
-                    App::status()->comment()::PENDING     => __('Pending'),
-                    App::status()->comment()::PUBLISHED   => __('Published'),
-                    App::status()->comment()::UNPUBLISHED => __('Unpublished'),
-                    default                               => '',
-                };
-
-                $ret .= '" id="dmls' . $rs->comment_id . '">';
-                $ret .= '<a href="' . App::backend()->url()->get('admin.comment', ['id' => $rs->comment_id]) . '" title="' . $title . '">' . $rs->post_title . '</a>';
-                $dt   = '<time datetime="' . Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '">%s</time>';
-                $info = [];
-                if ($large) {
-                    if ($author) {
-                        $info[] = __('by') . ' ' . $rs->comment_author;
-                    }
-
-                    if ($date) {
-                        $info[] = sprintf($dt, __('on') . ' ' . Date::dt2str(App::blog()->settings()->system->date_format, $rs->comment_dt));
-                    }
-
-                    if ($time) {
-                        $info[] = sprintf($dt, __('at') . ' ' . Date::dt2str(App::blog()->settings()->system->time_format, $rs->comment_dt));
-                    }
-                } else {
-                    if ($author) {
-                        $info[] = $rs->comment_author;
-                    }
-
-                    if ($date) {
-                        $info[] = sprintf($dt, Date::dt2str(__('%Y-%m-%d'), $rs->comment_dt));
-                    }
-
-                    if ($time) {
-                        $info[] = sprintf($dt, Date::dt2str(__('%H:%M'), $rs->comment_dt));
-                    }
-                }
-
-                if ($info !== []) {
-                    $ret .= ' (' . implode(' ', $info) . ')';
-                }
-
-                $ret .= '</li>';
-            }
-
-            $ret .= '</ul>';
-
-            return $ret . ('<p><a href="' . App::backend()->url()->get('admin.comments', ['status' => App::status()->comment()::JUNK]) . '">' . __('See all spams') . '</a></p>');
+            return (new Set())
+                 ->items([
+                     (new Ul())
+                         ->items([
+                             ... $lines($rs, $large),
+                         ]),
+                     (new Para())
+                         ->items([
+                             (new Link())
+                                 ->href(App::backend()->url()->get('admin.comments', ['status' => App::status()->comment()::JUNK]))
+                                 ->text(__('See all spams')),
+                         ]),
+                 ])
+             ->render();
         }
 
-        return '<p>' . __('No spams') .
-                ($recents > 0 ? ' ' . sprintf(__('since %d hour', 'since %d hours', $recents), $recents) : '') . '</p>';
+        return (new Note())
+            ->text(__('No spams') . ($recents > 0 ? ' ' . sprintf(__('since %d hour', 'since %d hours', $recents), $recents) : ''))
+        ->render();
     }
 
     /**
-     * @param      ArrayObject<int, ArrayObject<int, non-falsy-string>>  $contents  The contents
+     * @param      ArrayObject<int, ArrayObject<int, string>>  $contents  The contents
      */
     public static function adminDashboardContents(ArrayObject $contents): string
     {
@@ -180,20 +201,31 @@ class BackendBehaviors
         $preferences = My::prefs();
         if ($preferences->active) {
             $class = ($preferences->large ? 'medium' : 'small');
-            $ret   = '<div id="last-spams" class="box ' . $class . '">' .
-            '<h3>' .
-            '<img src="' . urldecode(Page::getPF('dmLastSpams/icon.svg')) . '" alt="" class="light-only icon-small">' .
-            '<img src="' . urldecode(Page::getPF('dmLastSpams/icon-dark.svg')) . '" alt="" class="dark-only icon-small">' .
-            ' ' . __('Last spams') . '</h3>';
-            $ret .= BackendBehaviors::getLastSpams(
-                $preferences->nb,
-                $preferences->large,
-                $preferences->author,
-                $preferences->date,
-                $preferences->time,
-                $preferences->recents
-            );
-            $ret .= '</div>';
+
+            $ret = (new Div('last-spams'))
+                ->class(['box', $class])
+                ->items([
+                    (new Text(
+                        'h3',
+                        (new Img(urldecode(Page::getPF(My::id() . '/icon.svg'))))
+                            ->class(['icon-small', 'light-only'])
+                        ->render() .
+                        (new Img(urldecode(Page::getPF(My::id() . '/icon-dark.svg'))))
+                            ->class(['icon-small', 'dark-only'])
+                        ->render() .
+                        ' ' . __('Last spams')
+                    )),
+                    (new Text(null, self::getLastSpams(
+                        $preferences->nb,
+                        $preferences->large,
+                        $preferences->author,
+                        $preferences->date,
+                        $preferences->time,
+                        $preferences->recents
+                    ))),
+                ])
+            ->render();
+
             $contents->append(new ArrayObject([$ret]));
         }
 
