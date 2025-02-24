@@ -109,7 +109,7 @@ class BackendBehaviors
 
         $rs = App::blog()->getComments($params);
         if (!$rs->isEmpty()) {
-            $lines = function (MetaRecord $rs, bool $large) use ($date, $time, $last_id, &$last_counter) {
+            $lines = function (MetaRecord $rs, bool $large) use ($author, $date, $time, $last_id, &$last_counter) {
                 while ($rs->fetch()) {
                     $status = match ((int) $rs->comment_status) {
                         App::status()->comment()::JUNK        => 'sts-junk',
@@ -132,11 +132,9 @@ class BackendBehaviors
                     }
                     $infos = [];
                     if ($large) {
-                        $details = __('on') . ' ' .
-                            Date::dt2str(App::blog()->settings()->system->date_format, $rs->comment_dt, App::auth()->getInfo('user_tz')) . ' ' .
-                            Date::dt2str(App::blog()->settings()->system->time_format, $rs->comment_dt, App::auth()->getInfo('user_tz'));
-
-                        $infos[] = (new Text(null, __('by') . ' ' . $rs->comment_author));
+                        if ($author) {
+                            $infos[] = (new Text(null, __('by') . ' ' . $rs->comment_author));
+                        }
                         if ($date) {
                             $details = __('on') . ' ' . Date::dt2str(App::blog()->settings()->system->date_format, $rs->comment_dt, App::auth()->getInfo('user_tz'));
                             $infos[] = (new Text('time', $details))
@@ -148,7 +146,9 @@ class BackendBehaviors
                                 ->extra('datetime="' . Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '"');
                         }
                     } else {
-                        $infos[] = (new Text(null, $rs->comment_author));
+                        if ($author) {
+                            $infos[] = (new Text(null, $rs->comment_author));
+                        }
                         if ($date) {
                             $infos[] = (new Text('time', Date::dt2str(__('%Y-%m-%d'), $rs->comment_dt, App::auth()->getInfo('user_tz'))))
                                 ->extra('datetime="' . Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '"');
