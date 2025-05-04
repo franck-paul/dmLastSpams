@@ -1,12 +1,12 @@
 <modules xmlns:da="http://dotaddict.org/da/">
   <module id="dmLastSpams">
     <name>Last Spams Dashboard Module</name>
-    <version>5.3</version>
+    <version>6.0</version>
     <author>Franck Paul</author>
     <desc>Display last spams on dashboard</desc>
-    <date>2025-03-06T00:22:54+0100</date>
-    <file>https://github.com/franck-paul/dmLastSpams/releases/download/5.3/plugin-dmLastSpams-5.3.zip</file>
-    <da:dcmin>2.33</da:dcmin>
+    <date>2025-05-04T10:21:42+0200</date>
+    <file>https://github.com/franck-paul/dmLastSpams/releases/download/6.0/plugin-dmLastSpams-6.0.zip</file>
+    <da:dcmin>2.34</da:dcmin>
     <da:details>https://open-time.net/?q=dmlastspams</da:details>
     <da:support>https://github.com/franck-paul/dmlastspams</da:support>
   </module>
