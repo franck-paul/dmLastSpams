@@ -33,6 +33,7 @@ use Dotclear\Helper\Html\Form\Number;
 use Dotclear\Helper\Html\Form\Para;
 use Dotclear\Helper\Html\Form\Set;
 use Dotclear\Helper\Html\Form\Text;
+use Dotclear\Helper\Html\Form\Timestamp;
 use Dotclear\Helper\Html\Form\Ul;
 use Exception;
 
@@ -137,25 +138,25 @@ class BackendBehaviors
                         }
                         if ($date) {
                             $details = __('on') . ' ' . Date::dt2str(App::blog()->settings()->system->date_format, $rs->comment_dt);
-                            $infos[] = (new Text('time', $details))
-                                ->extra('datetime="' . Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '"');
+                            $infos[] = (new Timestamp($details))
+                                ->datetime(Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')));
                         }
                         if ($time) {
                             $details = __('at') . ' ' . Date::dt2str(App::blog()->settings()->system->time_format, $rs->comment_dt);
-                            $infos[] = (new Text('time', $details))
-                                ->extra('datetime="' . Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '"');
+                            $infos[] = (new Timestamp($details))
+                                ->datetime(Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')));
                         }
                     } else {
                         if ($author) {
                             $infos[] = (new Text(null, $rs->comment_author));
                         }
                         if ($date) {
-                            $infos[] = (new Text('time', Date::dt2str(__('%Y-%m-%d'), $rs->comment_dt)))
-                                ->extra('datetime="' . Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '"');
+                            $infos[] = (new Timestamp(Date::dt2str(__('%Y-%m-%d'), $rs->comment_dt)))
+                                ->datetime(Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')));
                         }
                         if ($time) {
-                            $infos[] = (new Text('time', Date::dt2str(__('%H:%M'), $rs->comment_dt)))
-                                ->extra('datetime="' . Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')) . '"');
+                            $infos[] = (new Timestamp(Date::dt2str(__('%H:%M'), $rs->comment_dt)))
+                                ->datetime(Date::iso8601((int) strtotime($rs->comment_dt), App::auth()->getInfo('user_tz')));
                         }
                     }
                     yield (new Li('dmls' . $rs->comment_id))
