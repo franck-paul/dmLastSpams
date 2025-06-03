@@ -1,208 +1,197 @@
 /*global $, dotclear */
 'use strict';
 
-dotclear.dmLastSpamsCount = (icon) => {
-  dotclear.services(
-    'dmLastSpamsCount',
-    (data) => {
-      try {
-        const response = JSON.parse(data);
-        if (response?.success) {
-          if (response?.payload.ret) {
-            const nb_spams = response.payload.nb;
-            if (nb_spams !== undefined && nb_spams !== dotclear.dmLastSpams_SpamCount) {
-              dotclear.badge(icon, {
-                id: 'dmls',
-                value: nb_spams,
-                remove: nb_spams <= 0,
-                sibling: true,
-                icon: true,
-              });
-              dotclear.dmLastSpams_SpamCount = nb_spams;
-            }
+dotclear.ready(() => {
+  dotclear.dmLastSpams = dotclear.getData('dm_lastspams');
+
+  const viewSpam = (line, action = 'toggle', e = null) => {
+    if (line.getAttribute('id') === null) {
+      return;
+    }
+
+    const spamId = line.getAttribute('id').substring(4);
+    const lineId = `dmlse${spamId}`;
+    let li = document.getElementById(lineId);
+
+    // If meta key down display content rather than HTML code
+    const clean = !e.metaKey;
+
+    if (li) {
+      li.style.display = li.style.display === 'none' ? '' : 'none';
+      line.classList.toggle('expand');
+    } else {
+      // Get comment content if possible
+      dotclear.getCommentContent(
+        spamId,
+        (content) => {
+          if (content) {
+            li = document.createElement('li');
+            li.id = lineId;
+            li.className = 'expand';
+            li.insertAdjacentHTML('afterbegin', content);
+            line.classList.add('expand');
+            line.parentNode.insertBefore(li, line.nextSibling);
+            return;
           }
-        } else {
-          console.log(dotclear.debug && response?.message ? response.message : 'Dotclear REST server error');
-          return;
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    },
-    (error) => {
-      console.log(error);
-    },
-    true, // Use GET method
-    { json: 1 },
-  );
-};
+          // No content, content not found or server error
+          line.classList.remove('expand');
+        },
+        {
+          metadata: false,
+          clean,
+        },
+      );
+    }
+  };
 
-dotclear.dmLastSpamsRows = (last_id) => {
-  dotclear.services(
-    'dmLastSpamsRows',
-    (data) => {
-      try {
-        const response = JSON.parse(data);
-        if (response?.success) {
-          if (response?.payload.ret) {
-            const { counter } = response.payload;
-            // Replace current list with the new one
-            if ($('#last-spams ul').length) {
-              $('#last-spams ul').remove();
+  const getSpamCount = (icon) => {
+    dotclear.services(
+      'dmLastSpamsCount',
+      (data) => {
+        try {
+          const response = JSON.parse(data);
+          if (response?.success) {
+            if (response?.payload.ret) {
+              const nb_spams = response.payload.nb;
+              if (nb_spams !== undefined && nb_spams !== dotclear.dmLastSpams.spamCount) {
+                dotclear.badge(icon, {
+                  id: 'dmls',
+                  value: nb_spams,
+                  remove: nb_spams <= 0,
+                  sibling: true,
+                  icon: true,
+                });
+                dotclear.dmLastSpams.spamCount = nb_spams;
+              }
             }
-            if ($('#last-spams p').length) {
-              $('#last-spams p').remove();
-            }
-            if (counter > 0) {
-              dotclear.dmLastSpams_LastCounter = Number(dotclear.dmLastSpams_LastCounter) + counter;
-            }
-            $('#last-spams h3').after(response.payload.list);
-            if (dotclear.dmLastSpams_Badge) {
-              // Badge on module
-              dotclear.badge($('#last-spams'), {
-                id: 'dmls',
-                value: dotclear.dmLastSpams_LastCounter,
-                remove: dotclear.dmLasSpams_Lastcounter <= 0,
-              });
-            }
-            // Bind every new lines for viewing comment content
-            $.expandContent({
-              lines: $('#last-spams li.line'),
-              callback: dotclear.dmLastSpamsView,
-            });
-            $('#last-spams ul').addClass('expandable');
+          } else {
+            console.log(dotclear.debug && response?.message ? response.message : 'Dotclear REST server error');
+            return;
           }
-        } else {
-          console.log(dotclear.debug && response?.message ? response.message : 'Dotclear REST server error');
-          return;
+        } catch (e) {
+          console.log(e);
         }
-      } catch (e) {
-        console.log(e);
-      }
-    },
-    (error) => {
-      console.log(error);
-    },
-    true, // Use GET method
-    {
-      json: 1,
-      stored_id: dotclear.dmLastSpams_LastSpamId,
-      last_id,
-      last_counter: dotclear.dmLastSpams_LastCounter,
-    },
-  );
-};
-
-dotclear.dmLastSpamsCheck = () => {
-  dotclear.services(
-    'dmLastSpamsCheck',
-    (data) => {
-      try {
-        const response = JSON.parse(data);
-        if (response?.success) {
-          if (response?.payload.ret) {
-            const new_spams = response.payload.nb;
-            if (new_spams > 0) {
-              // Get new list
-              dotclear.dmLastSpamsRows(response.payload.last_id);
-
-              // Store last comment id
-              dotclear.dmLastSpams_LastSpamId = response.payload.last_id;
-            }
-          }
-        } else {
-          console.log(dotclear.debug && response?.message ? response.message : 'Dotclear REST server error');
-          return;
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    },
-    (error) => {
-      console.log(error);
-    },
-    true, // Use GET method
-    {
-      json: 1,
-      last_id: dotclear.dmLastSpams_LastSpamId,
-    },
-  );
-};
-
-dotclear.dmLastSpamsView = (line, action = 'toggle', e = null) => {
-  if ($(line).attr('id') === undefined) {
-    return;
-  }
-
-  const spamId = $(line).attr('id').substring(4);
-  const lineId = `dmlse${spamId}`;
-  let li = document.getElementById(lineId);
-
-  // If meta key down display content rather than HTML code
-  const clean = !e.metaKey;
-
-  if (li) {
-    $(li).toggle();
-    $(line).toggleClass('expand');
-  } else {
-    // Get comment content if possible
-    dotclear.getCommentContent(
-      spamId,
-      (content) => {
-        if (content) {
-          li = document.createElement('li');
-          li.id = lineId;
-          li.className = 'expand';
-          $(li).append(content);
-          $(line).addClass('expand');
-          line.parentNode.insertBefore(li, line.nextSibling);
-          return;
-        }
-        // No content, content not found or server error
-        $(line).removeClass('expand');
       },
+      (error) => {
+        console.log(error);
+      },
+      true, // Use GET method
+      { json: 1 },
+    );
+  };
+
+  const getSpamsRows = (last_id) => {
+    // Get new list
+    dotclear.services(
+      'dmLastSpamsRows',
+      (data) => {
+        try {
+          const response = JSON.parse(data);
+          if (response?.success) {
+            if (response?.payload.ret) {
+              const { counter } = response.payload;
+              // Replace current list with the new one
+              for (const item of document.querySelectorAll('#last-spams ul')) item.remove();
+              for (const item of document.querySelectorAll('#last-spams p')) item.remove();
+              if (counter > 0) {
+                dotclear.dmLastSpams.lastCounter = Number(dotclear.dmLastSpams.lastCounter) + counter;
+              }
+              const title = document.querySelector('#last-spams h3');
+              title?.insertAdjacentHTML('afterend', response.payload.list);
+
+              if (dotclear.dmLastSpams.badge) {
+                // Badge on module
+                dotclear.badge(document.querySelector('#last-spams'), {
+                  id: 'dmls',
+                  value: dotclear.dmLastSpams.lastCounter,
+                  remove: dotclear.dmLastSpams.lastcounter <= 0,
+                });
+              }
+              // Bind every new lines for viewing comment content
+              dotclear.expandContent({
+                lines: document.querySelectorAll('#last-spams li.line'),
+                callback: viewSpam,
+              });
+              for (const item of document.querySelectorAll('#last-spams ul')) item.classList.add('expandable');
+            }
+          } else {
+            console.log(dotclear.debug && response?.message ? response.message : 'Dotclear REST server error');
+            return;
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      },
+      (error) => {
+        console.log(error);
+      },
+      true, // Use GET method
       {
-        metadata: false,
-        clean,
+        json: 1,
+        stored_id: dotclear.dmLastSpams.lastSpamId,
+        last_id,
+        last_counter: dotclear.dmLastSpams.lastCounter,
       },
     );
-  }
-};
+  };
 
-dotclear.ready(() => {
-  Object.assign(dotclear, dotclear.getData('dm_lastspams'));
+  const checkLastSpams = () => {
+    dotclear.services(
+      'dmLastSpamsCheck',
+      (data) => {
+        try {
+          const response = JSON.parse(data);
+          if (response?.success) {
+            if (response?.payload.ret && response.payload.nb > 0) {
+              getSpamsRows(response.payload.last_id);
+              // Store last comment id
+              dotclear.dmLastSpams.lastSpamId = response.payload.last_id;
+            }
+          } else {
+            console.log(dotclear.debug && response?.message ? response.message : 'Dotclear REST server error');
+            return;
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      },
+      (error) => {
+        console.log(error);
+      },
+      true, // Use GET method
+      {
+        json: 1,
+        last_id: dotclear.dmLastSpams.lastSpamId,
+      },
+    );
+  };
 
-  $.expandContent({
-    lines: $('#last-spams li.line'),
-    callback: dotclear.dmLastSpamsView,
+  dotclear.expandContent({
+    lines: document.querySelectorAll('#last-spams li.line'),
+    callback: viewSpam,
   });
-  $('#last-spams ul').addClass('expandable');
+  for (const item of document.querySelectorAll('#last-spams ul')) item.classList.add('expandable');
 
-  if (!dotclear.dmLastSpams_AutoRefresh) {
+  if (!dotclear.dmLastSpams.autoRefresh) {
     return;
   }
 
   // First pass
-  dotclear.dmLastSpamsCheck();
-  // Auto refresh requested : Set interval between two checks for new comments and spam counter check
-  dotclear.dmLastSpams_Timer = setInterval(dotclear.dmLastSpamsCheck, (dotclear.dmLastSpams_Interval || 30) * 1000);
+  checkLastSpams();
+  dotclear.dmLastSpams.timer = setInterval(checkLastSpams, (dotclear.dmLastSpams.interval || 30) * 1000);
 
-  if (!dotclear.dmLastSpams_Badge) {
+  if (!dotclear.dmLastSpams.badge) {
     return;
   }
-  $('#last-spams').addClass('badgeable');
-  let icon_com = $('#dashboard-main #icons p a[href="comments.php"]');
+  let icon_com = document.querySelectorAll('#dashboard-main #icons p a[href="comments.php"]');
   if (!icon_com.length) {
-    icon_com = $('#dashboard-main #icons p #icon-process-comments-fav');
+    icon_com = document.querySelectorAll('#dashboard-main #icons p #icon-process-comments-fav');
   }
+  document.getElementById('last-spams')?.classList.add('badgeable');
   if (icon_com.length) {
     // First pass
-    dotclear.dmLastSpamsCount(icon_com);
+    getSpamCount(icon_com);
     // Then fired every X seconds
-    dotclear.dmLastSpams_TimerSpam = setInterval(
-      dotclear.dmLastSpamsCount,
-      (dotclear.dmLastSpams_Interval || 30) * 1000,
-      icon_com,
-    );
+    dotclear.dmLastSpams.timerSpam = setInterval(getSpamCount, (dotclear.dmLastSpams.interval || 30) * 1000, icon_com);
   }
 });

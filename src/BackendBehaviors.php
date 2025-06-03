@@ -59,12 +59,12 @@ class BackendBehaviors
 
         return
         Page::jsJson('dm_lastspams', [
-            'dmLastSpams_LastSpamId'  => $last_spam_id,
-            'dmLastSpams_AutoRefresh' => $preferences->autorefresh,
-            'dmLastSpams_Badge'       => $preferences->badge,
-            'dmLastSpams_LastCounter' => 0,
-            'dmLastSpams_SpamCount'   => -1,
-            'dmLastSpams_Interval'    => ($preferences->interval ?? 30),
+            'lastSpamId'  => $last_spam_id,
+            'autoRefresh' => $preferences->autorefresh,
+            'badge'       => $preferences->badge,
+            'lastCounter' => 0,
+            'spamCount'   => -1,
+            'interval'    => ($preferences->interval ?? 30),
         ]) .
         My::jsLoad('service.js') .
         My::cssLoad('style.css');
