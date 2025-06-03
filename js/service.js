@@ -4,44 +4,8 @@
 dotclear.ready(() => {
   dotclear.dmLastSpams = dotclear.getData('dm_lastspams');
 
-  const viewSpam = (line, action = 'toggle', e = null) => {
-    if (line.getAttribute('id') === null) {
-      return;
-    }
-
-    const spamId = line.getAttribute('id').substring(4);
-    const lineId = `dmlse${spamId}`;
-    let li = document.getElementById(lineId);
-
-    // If meta key down display content rather than HTML code
-    const clean = !e.metaKey;
-
-    if (li) {
-      li.style.display = li.style.display === 'none' ? '' : 'none';
-      line.classList.toggle('expand');
-    } else {
-      // Get comment content if possible
-      dotclear.getCommentContent(
-        spamId,
-        (content) => {
-          if (content) {
-            li = document.createElement('li');
-            li.id = lineId;
-            li.className = 'expand';
-            li.insertAdjacentHTML('afterbegin', content);
-            line.classList.add('expand');
-            line.parentNode.insertBefore(li, line.nextSibling);
-            return;
-          }
-          // No content, content not found or server error
-          line.classList.remove('expand');
-        },
-        {
-          metadata: false,
-          clean,
-        },
-      );
-    }
+  const viewSpam = (line, _action = 'toggle', event = null) => {
+    dotclear.dmViewComment(line, 'dmlse', !event.metaKey);
   };
 
   const getSpamCount = (icon) => {
@@ -183,12 +147,12 @@ dotclear.ready(() => {
   if (!dotclear.dmLastSpams.badge) {
     return;
   }
-  let icon_com = document.querySelectorAll('#dashboard-main #icons p a[href="comments.php"]');
-  if (!icon_com.length) {
-    icon_com = document.querySelectorAll('#dashboard-main #icons p #icon-process-comments-fav');
+
+  let icon_com = document.querySelector('#dashboard-main #icons p a[href="comments.php"]');
+  if (!icon_com) {
+    icon_com = document.querySelector('#dashboard-main #icons p #icon-process-comments-fav');
   }
-  document.getElementById('last-spams')?.classList.add('badgeable');
-  if (icon_com.length) {
+  if (icon_com) {
     // First pass
     getSpamCount(icon_com);
     // Then fired every X seconds
