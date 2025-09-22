@@ -17,7 +17,6 @@ namespace Dotclear\Plugin\dmLastSpams;
 
 use ArrayObject;
 use Dotclear\App;
-use Dotclear\Core\Backend\Page;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Form\Checkbox;
@@ -58,7 +57,7 @@ class BackendBehaviors
         }
 
         return
-        Page::jsJson('dm_lastspams', [
+        App::backend()->page()->jsJson('dm_lastspams', [
             'lastSpamId'  => $last_spam_id,
             'autoRefresh' => $preferences->autorefresh,
             'badge'       => $preferences->badge,
@@ -208,10 +207,10 @@ class BackendBehaviors
                 ->items([
                     (new Text(
                         'h3',
-                        (new Img(urldecode(Page::getPF(My::id() . '/icon.svg'))))
+                        (new Img(urldecode((string) App::backend()->page()->getPF(My::id() . '/icon.svg'))))
                             ->class(['icon-small', 'light-only'])
                         ->render() .
-                        (new Img(urldecode(Page::getPF(My::id() . '/icon-dark.svg'))))
+                        (new Img(urldecode((string) App::backend()->page()->getPF(My::id() . '/icon-dark.svg'))))
                             ->class(['icon-small', 'dark-only'])
                         ->render() .
                         ' ' . __('Last spams')
