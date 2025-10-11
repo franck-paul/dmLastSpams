@@ -39,7 +39,7 @@ class BackendRest
      *
      * @return     array<string, mixed>   The payload.
      */
-    public static function checkNewSpams($get): array
+    public static function checkNewSpams(array $get): array
     {
         $last_id      = empty($get['last_id']) ? -1 : $get['last_id'];
         $last_spam_id = -1;
@@ -74,7 +74,7 @@ class BackendRest
      *
      * @return     array<string, mixed>   The payload.
      */
-    public static function getLastSpamsRows($get): array
+    public static function getLastSpamsRows(array $get): array
     {
         $stored_id = empty($get['stored_id']) ? -1 : (int) $get['stored_id'];
         $last_id   = empty($get['last_id']) ? -1 : (int) $get['last_id'];
@@ -87,7 +87,7 @@ class BackendRest
             'last_id'   => $last_id,
         ];
 
-        if ($stored_id == -1) {
+        if ($stored_id === -1) {
             return $payload;
         }
 
