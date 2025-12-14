@@ -15,9 +15,9 @@ $this->registerModule(
     'Last Spams Dashboard Module',
     'Display last spams on dashboard',
     'Franck Paul',
-    '8.4',
+    '8.5',
     [
-        'date'     => '2025-10-25T10:32:05+0200',
+        'date'     => '2025-12-14T08:57:54+0100',
         'requires' => [
             ['core', '2.36'],
             ['dmHelper', '5.0'],
