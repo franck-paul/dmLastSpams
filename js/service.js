@@ -24,6 +24,7 @@ dotclear.ready(() => {
                   remove: nb_spams <= 0,
                   sibling: true,
                   icon: true,
+                  classes: 'badge-std',
                 });
                 dotclear.dmLastSpams.spamCount = nb_spams;
               }
