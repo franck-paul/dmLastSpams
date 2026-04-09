@@ -26,9 +26,11 @@ class BackendRest
      */
     public static function getSpamsCount(): array
     {
+        $count = is_numeric($count = App::blog()->getComments(['comment_status' => App::status()->comment()::JUNK], true)->f(0)) ? (int) $count : 0;
+
         return [
             'ret' => true,
-            'nb'  => (int) App::blog()->getComments(['comment_status' => App::status()->comment()::JUNK], true)->f(0),
+            'nb'  => $count,
         ];
     }
 
@@ -91,16 +93,20 @@ class BackendRest
             return $payload;
         }
 
+        // Variable data helpers
+        $_Bool = fn (mixed $var): bool => (bool) $var;
+        $_Int  = fn (mixed $var, int $default = 0): int => $var !== null && is_numeric($val = $var) ? (int) $val : $default;
+
         $preferences = My::prefs();
 
         $list = BackendBehaviors::getLastSpams(
-            $preferences->nb,
-            $preferences->large,
-            $preferences->author,
-            $preferences->date,
-            $preferences->time,
-            $preferences->recents,
-            $stored_id,
+            $_Int($preferences->nb),
+            $_Bool($preferences->large),
+            $_Bool($preferences->author),
+            $_Bool($preferences->date),
+            $_Bool($preferences->time),
+            $_Int($preferences->recents),
+            $_Int($stored_id),
             $counter
         );
 
