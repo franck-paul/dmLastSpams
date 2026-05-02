@@ -140,16 +140,19 @@ class BackendBehaviors
                         $new = 'dmls-new';
                         ++$last_counter;
                     }
+
                     $infos = [];
                     if ($large) {
                         if ($author) {
                             $infos[] = (new Text(null, __('by') . ' ' . $comment_author));
                         }
+
                         if ($date) {
                             $details = __('on') . ' ' . Date::dt2str($date_format, $comment_dt);
                             $infos[] = (new Timestamp($details))
                                 ->datetime(Date::iso8601((int) strtotime($comment_dt), $user_tz));
                         }
+
                         if ($time) {
                             $details = __('at') . ' ' . Date::dt2str($time_format, $comment_dt);
                             $infos[] = (new Timestamp($details))
@@ -159,15 +162,18 @@ class BackendBehaviors
                         if ($author) {
                             $infos[] = (new Text(null, $comment_author));
                         }
+
                         if ($date) {
                             $infos[] = (new Timestamp(Date::dt2str(__('%Y-%m-%d'), $comment_dt)))
                                 ->datetime(Date::iso8601((int) strtotime($comment_dt), $user_tz));
                         }
+
                         if ($time) {
                             $infos[] = (new Timestamp(Date::dt2str(__('%H:%M'), $comment_dt)))
                                 ->datetime(Date::iso8601((int) strtotime($comment_dt), $user_tz));
                         }
                     }
+
                     yield (new Li('dmls' . $comment_id))
                         ->class(['line', $status, $new])
                         ->separator(' ')
