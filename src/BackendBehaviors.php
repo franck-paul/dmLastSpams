@@ -115,11 +115,11 @@ class BackendBehaviors
                 $user_tz     = is_string($user_tz = App::auth()->getInfo('user_tz')) ? $user_tz : 'UTC';
 
                 while ($rs->fetch()) {
-                    $comment_status = is_numeric($comment_status = $rs->comment_status) ? (int) $comment_status : App::status()->comment()::PENDING;
-                    $comment_id     = is_numeric($comment_id = $rs->comment_id) ? (int) $comment_id : 0;
-                    $comment_dt     = is_string($comment_dt = $rs->comment_dt) ? $comment_dt : '';
-                    $comment_author = is_string($comment_author = $rs->comment_author) ? $comment_author : '';
-                    $post_title     = is_string($post_title = $rs->post_title) ? $post_title : '';
+                    $comment_status = $rs->intField('comment_status', true) ?: App::status()->comment()::PENDING;
+                    $comment_id     = $rs->intField('comment_id');
+                    $comment_dt     = $rs->strField('comment_dt');
+                    $comment_author = $rs->strField('comment_author');
+                    $post_title     = $rs->strField('post_title');
 
                     $status = match ($comment_status) {
                         App::status()->comment()::JUNK        => 'sts-junk',
