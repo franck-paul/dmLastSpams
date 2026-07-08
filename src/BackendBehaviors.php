@@ -59,11 +59,11 @@ class BackendBehaviors
         return
         App::backend()->page()->jsJson('dm_lastspams', [
             'lastSpamId'  => $last_spam_id,
-            'autoRefresh' => $preferences->autorefresh,
-            'badge'       => $preferences->badge,
+            'autoRefresh' => $preferences->getBool('autorefresh'),
+            'badge'       => $preferences->getBool('badge'),
             'lastCounter' => 0,
             'spamCount'   => -1,
-            'interval'    => ($preferences->interval ?? 30),
+            'interval'    => $preferences->getInt('interval', false) ?: 30,
         ]) .
         My::jsLoad('service.js') .
         My::cssLoad('style.css');
@@ -110,8 +110,8 @@ class BackendBehaviors
         $rs = App::blog()->getComments($params);
         if (!$rs->isEmpty()) {
             $lines = function (MetaRecord $rs, bool $large) use ($author, $date, $time, $last_id, &$last_counter) {
-                $date_format = is_string($date_format = App::blog()->settings()->system->date_format) ? $date_format : '%F';
-                $time_format = is_string($time_format = App::blog()->settings()->system->time_format) ? $time_format : '%T';
+                $date_format = App::blog()->settings()->get('system')->getStr('date_format', false) ?: '%F';
+                $time_format = App::blog()->settings()->get('system')->getStr('time_format', false) ?: '%T';
                 $user_tz     = is_string($user_tz = App::auth()->getInfo('user_tz')) ? $user_tz : 'UTC';
 
                 while ($rs->fetch()) {
@@ -213,15 +213,11 @@ class BackendBehaviors
      */
     public static function adminDashboardContents(ArrayObject $contents): string
     {
-        // Variable data helpers
-        $_Bool = fn (mixed $var): bool => (bool) $var;
-        $_Int  = fn (mixed $var, int $default = 0): int => $var !== null && is_numeric($val = $var) ? (int) $val : $default;
-
         // Add modules to the contents stack
         $preferences = My::prefs();
 
-        if ($_Bool($preferences->active)) {
-            $class = ($preferences->large ? 'medium' : 'small');
+        if ($preferences->getBool('active', false)) {
+            $class = ($preferences->getBool('large') ? 'medium' : 'small');
 
             $ret = (new Div('last-spams'))
                 ->class(['box', $class])
@@ -239,12 +235,12 @@ class BackendBehaviors
                         ' ' . __('Last spams')
                     )),
                     (new Text(null, self::getLastSpams(
-                        $_Int($preferences->nb),
-                        $_Bool($preferences->large),
-                        $_Bool($preferences->author),
-                        $_Bool($preferences->date),
-                        $_Bool($preferences->time),
-                        $_Int($preferences->recents),
+                        $preferences->getInt('nb', false),
+                        $preferences->getBool('large', false),
+                        $preferences->getBool('author', false),
+                        $preferences->getBool('date', false),
+                        $preferences->getBool('time', false),
+                        $preferences->getInt('recents', false),
                     ))),
                 ])
             ->render();
@@ -284,10 +280,6 @@ class BackendBehaviors
 
     public static function adminDashboardOptionsForm(): string
     {
-        // Variable data helpers
-        $_Bool = fn (mixed $var): bool => (bool) $var;
-        $_Int  = fn (mixed $var, int $default = 0): int => $var !== null && is_numeric($val = $var) ? (int) $val : $default;
-
         $preferences = My::prefs();
 
         // Add fieldset for plugin options
@@ -297,52 +289,52 @@ class BackendBehaviors
         ->legend((new Legend(__('Last spams on dashboard'))))
         ->fields([
             (new Para())->items([
-                (new Checkbox('dmlast_spams', $_Bool($preferences->active)))
+                (new Checkbox('dmlast_spams', $preferences->getBool('active', false)))
                     ->value(1)
                     ->label((new Label(__('Display last spams'), Label::INSIDE_TEXT_AFTER))),
             ]),
             (new Para())->items([
-                (new Number('dmlast_spams_nb', 1, 999, $_Int($preferences->nb, 5)))
+                (new Number('dmlast_spams_nb', 1, 999, $preferences->getInt('nb, 5', false)))
                     ->label((new Label(__('Number of last spams to display:'), Label::INSIDE_TEXT_BEFORE))),
             ]),
             (new Para())->items([
-                (new Checkbox('dmlast_spams_author', $_Bool($preferences->author)))
+                (new Checkbox('dmlast_spams_author', $preferences->getBool('author', false)))
                     ->value(1)
                     ->label((new Label(__('Show authors'), Label::INSIDE_TEXT_AFTER))),
             ]),
             (new Para())->items([
-                (new Checkbox('dmlast_spams_date', $_Bool($preferences->date)))
+                (new Checkbox('dmlast_spams_date', $preferences->getBool('date', false)))
                     ->value(1)
                     ->label((new Label(__('Show dates'), Label::INSIDE_TEXT_AFTER))),
             ]),
             (new Para())->items([
-                (new Checkbox('dmlast_spams_time', $_Bool($preferences->time)))
+                (new Checkbox('dmlast_spams_time', $preferences->getBool('time', false)))
                     ->value(1)
                     ->label((new Label(__('Show times'), Label::INSIDE_TEXT_AFTER))),
             ]),
             (new Para())->items([
-                (new Number('dmlast_spams_recents', 0, 96, $_Int($preferences->recents)))
+                (new Number('dmlast_spams_recents', 0, 96, $preferences->getInt('recents', false)))
                     ->label((new Label(__('Max age of spams to display (in hours):'), Label::INSIDE_TEXT_BEFORE))),
             ]),
             (new Para())->class('form-note')->items([
                 (new Text(null, __('Leave empty to ignore age of spams'))),
             ]),
             (new Para())->items([
-                (new Checkbox('dmlast_spams_small', !$_Bool($preferences->large)))
+                (new Checkbox('dmlast_spams_small', !$preferences->getBool('large', false)))
                     ->value(1)
                     ->label((new Label(__('Small screen'), Label::INSIDE_TEXT_AFTER))),
             ]),
             (new Para())->items([
-                (new Checkbox('dmlast_spams_autorefresh', $_Bool($preferences->autorefresh)))
+                (new Checkbox('dmlast_spams_autorefresh', $preferences->getBool('autorefresh', false)))
                     ->value(1)
                     ->label((new Label(__('Auto refresh'), Label::INSIDE_TEXT_AFTER))),
             ]),
             (new Para())->items([
-                (new Number('dmlast_spams_interval', 0, 9_999_999, $_Int($preferences->interval)))
+                (new Number('dmlast_spams_interval', 0, 9_999_999, $preferences->getInt('interval', false)))
                     ->label((new Label(__('Interval in seconds between two refreshes:'), Label::INSIDE_TEXT_BEFORE))),
             ]),
             (new Para())->items([
-                (new Checkbox('dmlast_spams_badge', $_Bool($preferences->badge)))
+                (new Checkbox('dmlast_spams_badge', $preferences->getBool('badge', false)))
                     ->value(1)
                     ->label((new Label(__('Display badges (only if Auto refresh is enabled)'), Label::INSIDE_TEXT_AFTER))),
             ]),

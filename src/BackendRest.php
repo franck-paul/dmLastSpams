@@ -93,20 +93,16 @@ class BackendRest
             return $payload;
         }
 
-        // Variable data helpers
-        $_Bool = fn (mixed $var): bool => (bool) $var;
-        $_Int  = fn (mixed $var, int $default = 0): int => $var !== null && is_numeric($val = $var) ? (int) $val : $default;
-
         $preferences = My::prefs();
 
         $list = BackendBehaviors::getLastSpams(
-            $_Int($preferences->nb),
-            $_Bool($preferences->large),
-            $_Bool($preferences->author),
-            $_Bool($preferences->date),
-            $_Bool($preferences->time),
-            $_Int($preferences->recents),
-            $_Int($stored_id),
+            $preferences->getInt('nb', false),
+            $preferences->getBool('large', false),
+            $preferences->getBool('author', false),
+            $preferences->getBool('date', false),
+            $preferences->getBool('time', false),
+            $preferences->getInt('recents', false),
+            $stored_id,
             $counter
         );
 
