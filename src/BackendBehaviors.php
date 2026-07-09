@@ -51,7 +51,7 @@ class BackendBehaviors
 
         if ($rs->count()) {
             $rs->fetch();
-            $last_spam_id = $rs->comment_id;
+            $last_spam_id = $rs->intField('comment_id');
         } else {
             $last_spam_id = -1;
         }
