@@ -294,7 +294,7 @@ class BackendBehaviors
                     ->label((new Label(__('Display last spams'), Label::INSIDE_TEXT_AFTER))),
             ]),
             (new Para())->items([
-                (new Number('dmlast_spams_nb', 1, 999, $preferences->getInt('nb, 5', false)))
+                (new Number('dmlast_spams_nb', 1, 999, $preferences->getInt('nb', false) ?: 5))
                     ->label((new Label(__('Number of last spams to display:'), Label::INSIDE_TEXT_BEFORE))),
             ]),
             (new Para())->items([
