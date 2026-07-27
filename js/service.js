@@ -2,6 +2,13 @@
 'use strict';
 
 dotclear.ready(() => {
+  /**
+   * Check connection
+   *
+   * @return     {?boolean}  true/false depending on connection, null if cannot be tested
+   */
+  dotclear.dmOnline = () => ('onLine' in navigator ? navigator.onLine : null);
+
   dotclear.dmLastSpams = dotclear.getData('dm_lastspams');
 
   const viewSpam = (line, _action = 'toggle', event = null) => {
@@ -9,6 +16,8 @@ dotclear.ready(() => {
   };
 
   const getSpamCount = (icon) => {
+    if (dotclear.dmOnline() === false) return;
+
     dotclear.services(
       'dmLastSpamsCount',
       (data) => {
@@ -46,6 +55,8 @@ dotclear.ready(() => {
   };
 
   const getSpamsRows = (last_id) => {
+    if (dotclear.dmOnline() === false) return;
+
     // Get new list
     dotclear.services(
       'dmLastSpamsRows',
@@ -101,6 +112,8 @@ dotclear.ready(() => {
   };
 
   const checkLastSpams = () => {
+    if (dotclear.dmOnline() === false) return;
+
     dotclear.services(
       'dmLastSpamsCheck',
       (data) => {
