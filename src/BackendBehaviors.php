@@ -65,7 +65,7 @@ class BackendBehaviors
             'spamCount'   => -1,
             'interval'    => $preferences->getInt('interval', false) ?: 30,
         ]) .
-        My::jsLoad('service.js') .
+        My::jsLoad('service.js', defer: true) .
         My::cssLoad('style.css');
     }
 
