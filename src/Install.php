@@ -46,9 +46,9 @@ class Install
                 }
 
                 // Change settings names (remove last_spams_ prefix in them)
-                $rename = static function (string $name, UserWorkspaceInterface $preferences): void {
-                    if ($preferences->prefExists('last_spams_' . $name, true)) {
-                        $preferences->rename('last_spams_' . $name, $name);
+                $rename = static function (string $name, UserWorkspaceInterface $userWorkspace): void {
+                    if ($userWorkspace->prefExists('last_spams_' . $name, true)) {
+                        $userWorkspace->rename('last_spams_' . $name, $name);
                     }
                 };
 

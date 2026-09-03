@@ -109,17 +109,17 @@ class BackendBehaviors
 
         $rs = App::blog()->getComments($params);
         if (!$rs->isEmpty()) {
-            $lines = function (MetaRecord $rs, bool $large) use ($author, $date, $time, $last_id, &$last_counter) {
+            $lines = function (MetaRecord $metaRecord, bool $large) use ($author, $date, $time, $last_id, &$last_counter) {
                 $date_format = App::blog()->settings()->get('system')->getStr('date_format', false) ?: '%F';
                 $time_format = App::blog()->settings()->get('system')->getStr('time_format', false) ?: '%T';
                 $user_tz     = is_string($user_tz = App::auth()->getInfo('user_tz')) ? $user_tz : 'UTC';
 
-                while ($rs->fetch()) {
-                    $comment_status = $rs->intField('comment_status', true) ?: App::status()->comment()::PENDING;
-                    $comment_id     = $rs->intField('comment_id');
-                    $comment_dt     = $rs->strField('comment_dt');
-                    $comment_author = $rs->strField('comment_author');
-                    $post_title     = $rs->strField('post_title');
+                while ($metaRecord->fetch()) {
+                    $comment_status = $metaRecord->intField('comment_status', true) ?: App::status()->comment()::PENDING;
+                    $comment_id     = $metaRecord->intField('comment_id');
+                    $comment_dt     = $metaRecord->strField('comment_dt');
+                    $comment_author = $metaRecord->strField('comment_author');
+                    $post_title     = $metaRecord->strField('post_title');
 
                     $status = match ($comment_status) {
                         App::status()->comment()::JUNK        => 'sts-junk',
@@ -209,9 +209,9 @@ class BackendBehaviors
     }
 
     /**
-     * @param      ArrayObject<int, ArrayObject<int, string>>  $contents  The contents
+     * @param      ArrayObject<int, ArrayObject<int, string>>  $arrayObject  The contents
      */
-    public static function adminDashboardContents(ArrayObject $contents): string
+    public static function adminDashboardContents(ArrayObject $arrayObject): string
     {
         // Add modules to the contents stack
         $preferences = My::prefs();
@@ -245,7 +245,7 @@ class BackendBehaviors
                 ])
             ->render();
 
-            $contents->append(new ArrayObject([$ret]));
+            $arrayObject->append(new ArrayObject([$ret]));
         }
 
         return '';
