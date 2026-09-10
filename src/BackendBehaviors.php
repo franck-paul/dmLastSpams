@@ -288,56 +288,66 @@ class BackendBehaviors
         (new Fieldset('dmlastspams'))
         ->legend((new Legend(__('Last spams on dashboard'))))
         ->fields([
-            (new Para())->items([
-                (new Checkbox('dmlast_spams', $preferences->getBool('active', false)))
-                    ->value(1)
-                    ->label((new Label(__('Display last spams'), Label::INSIDE_TEXT_AFTER))),
-            ]),
-            (new Para())->items([
-                (new Number('dmlast_spams_nb', 1, 999, $preferences->getInt('nb', false) ?: 5))
-                    ->label((new Label(__('Number of last spams to display:'), Label::INSIDE_TEXT_BEFORE))),
-            ]),
-            (new Para())->items([
-                (new Checkbox('dmlast_spams_author', $preferences->getBool('author', false)))
-                    ->value(1)
-                    ->label((new Label(__('Show authors'), Label::INSIDE_TEXT_AFTER))),
-            ]),
-            (new Para())->items([
-                (new Checkbox('dmlast_spams_date', $preferences->getBool('date', false)))
-                    ->value(1)
-                    ->label((new Label(__('Show dates'), Label::INSIDE_TEXT_AFTER))),
-            ]),
-            (new Para())->items([
-                (new Checkbox('dmlast_spams_time', $preferences->getBool('time', false)))
-                    ->value(1)
-                    ->label((new Label(__('Show times'), Label::INSIDE_TEXT_AFTER))),
-            ]),
-            (new Para())->items([
-                (new Number('dmlast_spams_recents', 0, 96, $preferences->getInt('recents', false)))
-                    ->label((new Label(__('Max age of spams to display (in hours):'), Label::INSIDE_TEXT_BEFORE))),
-            ]),
-            (new Para())->class('form-note')->items([
-                (new Text(null, __('Leave empty to ignore age of spams'))),
-            ]),
-            (new Para())->items([
-                (new Checkbox('dmlast_spams_small', !$preferences->getBool('large', false)))
-                    ->value(1)
-                    ->label((new Label(__('Small screen'), Label::INSIDE_TEXT_AFTER))),
-            ]),
-            (new Para())->items([
-                (new Checkbox('dmlast_spams_autorefresh', $preferences->getBool('autorefresh', false)))
-                    ->value(1)
-                    ->label((new Label(__('Auto refresh'), Label::INSIDE_TEXT_AFTER))),
-            ]),
-            (new Para())->items([
-                (new Number('dmlast_spams_interval', 0, 9_999_999, $preferences->getInt('interval', false)))
-                    ->label((new Label(__('Interval in seconds between two refreshes:'), Label::INSIDE_TEXT_BEFORE))),
-            ]),
-            (new Para())->items([
-                (new Checkbox('dmlast_spams_badge', $preferences->getBool('badge', false)))
-                    ->value(1)
-                    ->label((new Label(__('Display badges (only if Auto refresh is enabled)'), Label::INSIDE_TEXT_AFTER))),
-            ]),
+            (new Para())
+                ->items([
+                    (new Checkbox('dmlast_spams', $preferences->getBool('active', false)))
+                        ->value(1)
+                        ->label((new Label(__('Display last spams'), Label::INSIDE_TEXT_AFTER))),
+                ]),
+            (new Para())
+                ->items([
+                    (new Number('dmlast_spams_nb', 1, 999, $preferences->getInt('nb', false) ?: 5))
+                        ->label((new Label(__('Number of last spams to display:'), Label::INSIDE_TEXT_BEFORE))),
+                ]),
+            (new Para())
+                ->items([
+                    (new Checkbox('dmlast_spams_author', $preferences->getBool('author', false)))
+                        ->value(1)
+                        ->label((new Label(__('Show authors'), Label::INSIDE_TEXT_AFTER))),
+                ]),
+            (new Para())
+                ->items([
+                    (new Checkbox('dmlast_spams_date', $preferences->getBool('date', false)))
+                        ->value(1)
+                        ->label((new Label(__('Show dates'), Label::INSIDE_TEXT_AFTER))),
+                ]),
+            (new Para())
+                ->items([
+                    (new Checkbox('dmlast_spams_time', $preferences->getBool('time', false)))
+                        ->value(1)
+                        ->label((new Label(__('Show times'), Label::INSIDE_TEXT_AFTER))),
+                ]),
+            (new Para())
+                ->items([
+                    (new Number('dmlast_spams_recents', 0, 96, $preferences->getInt('recents', false)))
+                        ->label((new Label(__('Max age of spams to display (in hours):'), Label::INSIDE_TEXT_BEFORE))),
+                ]),
+            (new Note())
+                ->class('form-note')
+                ->text(__('Leave empty to ignore age of spams')),
+            (new Para())
+                ->items([
+                    (new Checkbox('dmlast_spams_small', !$preferences->getBool('large', false)))
+                        ->value(1)
+                        ->label((new Label(__('Small screen'), Label::INSIDE_TEXT_AFTER))),
+                ]),
+            (new Para())
+                ->items([
+                    (new Checkbox('dmlast_spams_autorefresh', $preferences->getBool('autorefresh', false)))
+                        ->value(1)
+                        ->label((new Label(__('Auto refresh'), Label::INSIDE_TEXT_AFTER))),
+                ]),
+            (new Para())
+                ->items([
+                    (new Number('dmlast_spams_interval', 0, 9_999_999, $preferences->getInt('interval', false)))
+                        ->label((new Label(__('Interval in seconds between two refreshes:'), Label::INSIDE_TEXT_BEFORE))),
+                ]),
+            (new Para())
+                ->items([
+                    (new Checkbox('dmlast_spams_badge', $preferences->getBool('badge', false)))
+                        ->value(1)
+                        ->label((new Label(__('Display badges (only if Auto refresh is enabled)'), Label::INSIDE_TEXT_AFTER))),
+                ]),
         ])
         ->render();
 
