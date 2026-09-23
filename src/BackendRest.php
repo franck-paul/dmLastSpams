@@ -84,7 +84,6 @@ class BackendRest
 
         $payload = [
             'ret'       => true,
-            'counter'   => 0,
             'stored_id' => $stored_id,
             'last_id'   => $last_id,
         ];
