@@ -224,11 +224,11 @@ class BackendBehaviors
                 ->items([
                     (new Text(
                         'h3',
-                        (new Img(urldecode((string) App::backend()->page()->getPF(My::id() . '/icon.svg'))))
+                        (new Img(urldecode(App::backend()->page()->getPF(My::id() . '/icon.svg'))))
                             ->alt('')
                             ->class(['icon-small', 'light-only'])
                         ->render() .
-                        (new Img(urldecode((string) App::backend()->page()->getPF(My::id() . '/icon-dark.svg'))))
+                        (new Img(urldecode(App::backend()->page()->getPF(My::id() . '/icon-dark.svg'))))
                             ->alt('')
                             ->class(['icon-small', 'dark-only'])
                         ->render() .

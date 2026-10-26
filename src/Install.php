@@ -38,7 +38,7 @@ class Install
         try {
             // Update
             $old_version = App::version()->getVersion(My::id());
-            if (version_compare((string) $old_version, '2.0', '<')) {
+            if (version_compare($old_version, '2.0', '<')) {
                 // Rename settings workspace
                 if (App::auth()->prefs()->exists('dmlastspams')) {
                     App::auth()->prefs()->delWorkspace(My::id());
