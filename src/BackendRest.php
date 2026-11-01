@@ -56,7 +56,7 @@ class BackendRest
         $rs    = App::blog()->getComments($sqlp);
         $count = $rs->count();
 
-        if ($count) {
+        if ($count > 0) {
             while ($rs->fetch()) {
                 $last_spam_id = $rs->intField('comment_id');
             }

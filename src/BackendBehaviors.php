@@ -49,7 +49,7 @@ class BackendBehaviors
 
         $rs = App::blog()->getComments($sqlp);
 
-        if ($rs->count()) {
+        if ($rs->count() > 0) {
             $rs->fetch();
             $last_spam_id = $rs->intField('comment_id');
         } else {
@@ -217,7 +217,7 @@ class BackendBehaviors
         $preferences = My::prefs();
 
         if ($preferences->getBool('active', false)) {
-            $class = ($preferences->getBool('large') ? 'medium' : 'small');
+            $class = ($preferences->getBool('large', false) ? 'medium' : 'small');
 
             $ret = (new Div('last-spams'))
                 ->class(['box', $class])
